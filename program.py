@@ -18,8 +18,8 @@ def submit():
             event_entry = ctk.CTkEntry(root, placeholder_text=f"Entry {i + 1}")
             event_entry.pack( pady=5)
             entries.append(event_entry)
-    label_result.configure(text=f"Created {user_input} events!")
-    btn_submit.configure(command=showentries)
+            label_result.configure(text=f"Created {user_input} events!")
+            btn_submit.configure(command=showentries)
 
 # Create the main window
 root = ctk.CTk()
