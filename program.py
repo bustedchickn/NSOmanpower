@@ -1,11 +1,11 @@
 import customtkinter as ctk
 
-
+# TODO Get the times from text boxes next to them
 def showentries():
     for i, entry in enumerate(entries):
         print(f"Entry {i + 1}: {entry.get()}")
 
-
+# TODO Create a way to go back and redo stuff
 def submit():
     user_input = event_num_entry.get()
     try:
@@ -45,5 +45,14 @@ label_result = ctk.CTkLabel(root, text="")
 label_result.pack(pady=10)
 
 
-
+# TODO Format the buttons so it looks cohesive.
+# TODO Get a list of people working
 root.mainloop()
+
+
+"""
+TODO eventually add a way to add manpower tasks. Get the tasks and randomize them through people.
+Display it in the program now and then add a button to export to an excel sheet.
+Then add documentation for how to use it.
+Export then we can install the software on a work computer and see how it works.
+"""
