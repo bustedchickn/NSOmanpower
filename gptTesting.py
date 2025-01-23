@@ -10,7 +10,7 @@ def process_names():
 
 # Function to populate the spreadsheet
 def populate_spreadsheet():
-    instruction_tab3.destroy()
+    instruction_tab4.destroy()
 
     # Clear existing grid
     for widget in spreadsheet_frame.winfo_children():
@@ -29,13 +29,30 @@ def populate_spreadsheet():
 
         # Editable cells for each event
         for col in range(len(event_entries)):
-            cell = ctk.CTkEntry(spreadsheet_frame, placeholder_text="", width=100)
+            cell = ctk.CTkEntry(spreadsheet_frame, placeholder_text=    "", width=100)
             cell.grid(row=row + 1, column=col + 1, padx=5, pady=5)
+
+# Function to create the tasks gui
+def populate_tasks():
+    instruction_tab3.destroy()
+
+    # Clear existing grid
+    for widget in task_frame.winfo_children():
+        widget.destroy()
+
+    # Generate Events
+    for row, (event_entry, time_entry) in enumerate(zip(event_entries, time_entries)):
+        event_label = ctk.CTkLabel(task_frame, text=f"{event_entry.get()}\n{time_entry.get()}", font=("Helvetica", 12, "bold"))
+        event_label.grid(row=row, column=1, padx=5, pady=5)
+        task_textbox = ctk.CTkTextbox(task_frame, width=800, height=350)
+        task_textbox.grid(row=row, column=2, padx=5, pady=5)
+        task_entries.append(task_textbox)
 
 # Function to display event and time entries
 def showentries():
     for i, (event_entry, time_entry) in enumerate(zip(event_entries, time_entries)):
         print(f"Event {i + 1}: {event_entry.get()} at {time_entry.get()}")
+    populate_tasks()
 
 # Function to handle initial event creation
 def submit():
@@ -100,6 +117,7 @@ root.geometry("900x600")
 # Data structures to track widgets and names
 event_entries = []
 time_entries = []
+task_entries = []
 entry_frames = []
 names_list = []
 
@@ -108,7 +126,7 @@ tabview = ctk.CTkTabview(root, width=850, height=550)
 tabview.pack(pady=10, padx=10, fill="both", expand=True)
 
 # Tab 1: Event Management
-event_tab = tabview.add("Event Management")
+event_tab = tabview.add("Events")
 
 # Title for Tab 1
 title = ctk.CTkLabel(event_tab, text="Build a MANPOWER Sheet", text_color="black", font=("Helvetica", 18, "bold"))
@@ -145,7 +163,7 @@ btn_show = ctk.CTkButton(event_tab, text="Show Entries", command=showentries)
 btn_show.pack(pady=10)
 
 # Tab 2: Name Input
-names_tab = tabview.add("Name Input")
+names_tab = tabview.add("Names")
 
 # Title for Tab 2
 names_title = ctk.CTkLabel(names_tab, text="Enter Names", text_color="black", font=("Helvetica", 18, "bold"))
@@ -167,16 +185,33 @@ btn_process_names.pack(pady=10)
 label_names_status = ctk.CTkLabel(names_tab, text="")
 label_names_status.pack(pady=10)
 
-# Tab 3: Name Display (Spreadsheet)
-spreadsheet_tab = tabview.add("Spreadsheet")
+# Tab 3: Task List
+task_tab = tabview.add("Tasks")
 
 # Title for Tab 3
+task_title = ctk.CTkLabel(task_tab, text="Tasks", text_color="black", font=("Helvetica", 18, "bold"))
+task_title.pack(pady=10)
+
+# Instructions for tab 3
+instruction_tab3 = ctk.CTkLabel(task_tab, text="Please process events in the previous tab", text_color="black", font=("Helvetica", 14, "italic"))
+instruction_tab3.pack()
+
+# Scrollable frame for Tab 3
+task_scrollable = ctk.CTkScrollableFrame(task_tab, width=850, height=400)
+task_scrollable.pack(pady=10, fill="both", expand=True)
+task_frame = ctk.CTkFrame(task_scrollable)
+task_frame.pack(pady=10, fill="both", expand=True)
+
+# Tab 4: Name Display (Spreadsheet)
+spreadsheet_tab = tabview.add("Spreadsheet")
+
+# Title for Tab 4
 spreadsheet_title = ctk.CTkLabel(spreadsheet_tab, text="Spreadsheet View", text_color="black", font=("Helvetica", 18, "bold"))
 spreadsheet_title.pack(pady=10)
 
-# Instructions for Tab 3
-instruction_tab3 = ctk.CTkLabel(spreadsheet_tab, text="Please process events and names in the previous tabs", text_color="black", font=("Helvetica", 14, "italic"))
-instruction_tab3.pack()
+# Instructions for Tab 4
+instruction_tab4 = ctk.CTkLabel(spreadsheet_tab, text="Please process events, names, and tasks in the previous tabs", text_color="black", font=("Helvetica", 14, "italic"))
+instruction_tab4.pack()
 
 # Scrollable Frame for spreadsheet
 spreadsheet_scrollable = ctk.CTkScrollableFrame(spreadsheet_tab, width=850, height=400)
