@@ -1,5 +1,45 @@
 import customtkinter as ctk
 
+class variable_task_list():
+    def __init__(self,name,col_pointer,starting_row):
+        self.name = name
+        self.col_pointer = col_pointer
+        self.starting_row = starting_row
+        self.button = None
+        self.value = []
+
+    def appended(self,value):
+        self.value.append(value)
+
+    def add_tasks(self):
+        print(f"I should add more tasks {self.name}")
+    # Generate Events
+        for row, (event_entry, time_entry) in enumerate(zip(event_entries, time_entries)):
+
+            print("searching for my row")
+            
+            if (event_entry.get() == self.name):
+                print("I found the row I'm in")
+                self.col_pointer += 1
+                task_textbox = ctk.CTkTextbox(task_frame, width=325, height=100)
+                task_textbox.grid(row=row, column=self.col_pointer, padx=5, pady=5)
+                self.appended(task_textbox)
+                self.button.grid(row=row, column=self.col_pointer+1, padx=5, pady=5)
+
+                
+                print(f"created in column {self.col_pointer} with the button in {self.col_pointer+1}")
+
+                if (self.col_pointer > 5):
+                    shifting_time(row)
+
+                task_entries[self.starting_row] = self
+                
+# Moves each of the task rows down
+def shifting_time(row):
+    for item in range(row, len(task_entries)):
+        item.starting_row += 1
+
+
 # Function to handle the names entered in the second tab
 def process_names():
     global names_list
@@ -42,11 +82,37 @@ def populate_tasks():
 
     # Generate Events
     for row, (event_entry, time_entry) in enumerate(zip(event_entries, time_entries)):
+        
+        # Create a new list that holds the tasks
+        l = variable_task_list(event_entry.get(),2,row)
+        print(f"l.name is {l.name}")
+        print(f"l.value is {l.name}")
+        
+        # spacing for asthetics
+        spacer = ctk.CTkLabel(task_frame, text="",width=100)
+        spacer.grid(row=row, column=0, padx=10, pady=5)
+
+        # Title label
         event_label = ctk.CTkLabel(task_frame, text=f"{event_entry.get()}\n{time_entry.get()}", font=("Helvetica", 12, "bold"))
-        event_label.grid(row=row, column=1, padx=5, pady=5)
-        task_textbox = ctk.CTkTextbox(task_frame, width=800, height=350)
+        event_label.grid(row=row, column=1, padx=10, pady=5)
+        task_textbox = ctk.CTkTextbox(task_frame, width=325, height=100)
         task_textbox.grid(row=row, column=2, padx=5, pady=5)
-        task_entries.append(task_textbox)
+        l.appended(task_textbox)
+
+        # Add the button for adding tasks
+        task_button = ctk.CTkButton(task_frame, text="Add a task")
+        task_button.grid(row=row, column=3, padx=5, pady=5)
+
+        l.button = task_button
+        l.button.configure(command=l.add_tasks)
+        print("Button configured")
+
+        task_entries.append(l)
+        print(f"task_entries is now {task_entries}")
+
+
+
+
 
 # Function to display event and time entries
 def showentries():
