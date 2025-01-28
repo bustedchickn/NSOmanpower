@@ -5,39 +5,82 @@ class variable_task_list():
         self.name = name
         self.col_pointer = col_pointer
         self.starting_row = starting_row
+        self.row_pointer = starting_row
         self.button = None
+        self.button2 = None
         self.value = []
 
     def appended(self,value):
         self.value.append(value)
 
     def add_tasks(self):
-        print(f"I should add more tasks {self.name}")
-    # Generate Events
-        for row, (event_entry, time_entry) in enumerate(zip(event_entries, time_entries)):
+        
+        # Generate Events
+        self.col_pointer += 1
+        if (self.col_pointer > 5):
+            self.row_pointer += 1
+            self.col_pointer = 2
+            shift_down(self.row_pointer)
+                    
+        task_textbox = ctk.CTkTextbox(task_frame, width=325, height=100)
+        task_textbox.grid(row=self.row_pointer, column=self.col_pointer, padx=5, pady=5)
+        self.appended(task_textbox)
+        self.button.grid(row=self.row_pointer, column=self.col_pointer+1, padx=5, pady=5)
+        self.button2.grid(row=self.row_pointer, column=self.col_pointer+1, padx=5, pady=5)
+                    
+        print(f"created in column {self.col_pointer} with the button in {self.col_pointer+1}")
 
-            print("searching for my row")
-            
-            if (event_entry.get() == self.name):
-                print("I found the row I'm in")
-                self.col_pointer += 1
-                task_textbox = ctk.CTkTextbox(task_frame, width=325, height=100)
-                task_textbox.grid(row=row, column=self.col_pointer, padx=5, pady=5)
-                self.appended(task_textbox)
-                self.button.grid(row=row, column=self.col_pointer+1, padx=5, pady=5)
+                    
 
+        task_entries[self.starting_row] = self
+    
+    def remove_tasks(self):
+        
+        self.value.pop().destroy()
+        self.col_pointer -= 1
+        if (self.col_pointer<2):
+            self.row_pointer -= 1
+            self.col_pointer = 5
+            shift_up(self.row_pointer)
+
+        print(f"{self.name} says, 'My row pointer is at {self.row_pointer}'")
+
+        
+        self.button.grid(row=self.row_pointer, column=self.col_pointer + 1, padx=5, pady=5)
+        self.button2.grid(row=self.row_pointer, column=self.col_pointer + 1, padx=5, pady=5)
+        
                 
-                print(f"created in column {self.col_pointer} with the button in {self.col_pointer+1}")
 
-                if (self.col_pointer > 5):
-                    shifting_time(row)
-
-                task_entries[self.starting_row] = self
+        task_entries[self.starting_row] = self
                 
 # Moves each of the task rows down
-def shifting_time(row):
+def shift_down(row):
     for item in range(row, len(task_entries)):
-        item.starting_row += 1
+        task_entries[item].row_pointer += 1
+        
+        newrow=task_entries[item].row_pointer
+        print(f"\nThe starting row of {task_entries[item].name} is {newrow}\n")
+        for widget in task_frame.winfo_children():
+            grid_info = widget.grid_info()
+            # print(grid_info)
+            if grid_info["row"] == newrow - 1:
+                print(f"I should be moving the items on row {newrow - 1} to row {newrow}")
+                widget.grid(row=newrow+1)
+
+# Moves each of the task rows up
+def shift_up(row):
+    print("shifting up")
+    for item in range(row, len(task_entries)):
+        task_entries[item].row_pointer -= 1
+        
+        newrow=task_entries[item].row_pointer
+        print(f"\nThe starting row of {task_entries[item].name} is {newrow}\n")
+        for widget in task_frame.winfo_children():
+            grid_info = widget.grid_info()
+            # print(grid_info)
+            if grid_info["row"] == newrow:
+                print(f"I should be moving the items on row {newrow} to row {newrow-1}")
+                widget.grid(row=newrow-1)
 
 
 # Function to handle the names entered in the second tab
@@ -99,14 +142,23 @@ def populate_tasks():
         task_textbox.grid(row=row, column=2, padx=5, pady=5)
         l.appended(task_textbox)
 
+        # Add the button for removing tasks
+        task_button = ctk.CTkButton(task_frame, text="delete a task")
+        task_button.grid(row=row, column=3, padx=5, pady=5, sticky="s,w")
+
+        l.button2 = task_button
+        l.button2.configure(command=l.remove_tasks)
+        print("Button configured")
+
+
         # Add the button for adding tasks
         task_button = ctk.CTkButton(task_frame, text="Add a task")
-        task_button.grid(row=row, column=3, padx=5, pady=5)
+        task_button.grid(row=row, column=3, padx=5, pady=5, sticky="n,w")
 
         l.button = task_button
         l.button.configure(command=l.add_tasks)
         print("Button configured")
-
+        
         task_entries.append(l)
         print(f"task_entries is now {task_entries}")
 
