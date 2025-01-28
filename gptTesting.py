@@ -14,73 +14,71 @@ class variable_task_list():
         self.value.append(value)
 
     def add_tasks(self):
-        
-        # Generate Events
         self.col_pointer += 1
-        if (self.col_pointer > 5):
+
+        # Check if we need to wrap to the next row
+        if self.col_pointer > 5:
             self.row_pointer += 1
             self.col_pointer = 2
             shift_down(self.row_pointer)
-                    
+
+        # Create and place the new task textbox
         task_textbox = ctk.CTkTextbox(task_frame, width=325, height=100)
-        task_textbox.grid(row=self.row_pointer, column=self.col_pointer, padx=5, pady=5)
-        self.appended(task_textbox)
-        self.button.grid(row=self.row_pointer, column=self.col_pointer+1, padx=5, pady=5)
-        self.button2.grid(row=self.row_pointer, column=self.col_pointer+1, padx=5, pady=5)
-                    
-        print(f"created in column {self.col_pointer} with the button in {self.col_pointer+1}")
+        self.value.append(task_textbox)
 
-                    
+        # Update grid positions for all widgets
+        self.update_grid_positions()
+        print(f"Created task in row {self.row_pointer}, column {self.col_pointer}")
 
-        task_entries[self.starting_row] = self
-    
+
     def remove_tasks(self):
-        
-        self.value.pop().destroy()
+        # Remove the last task widget
+        if self.value:
+            self.value.pop().destroy()
+
         self.col_pointer -= 1
-        if (self.col_pointer<2):
+
+        # Check if we need to wrap back to the previous row
+        if self.col_pointer < 2:
             self.row_pointer -= 1
             self.col_pointer = 5
             shift_up(self.row_pointer)
 
-        print(f"{self.name} says, 'My row pointer is at {self.row_pointer}'")
+        # Update grid positions for all widgets
+        self.update_grid_positions()
+        print(f"{self.name} removed task. Now at row {self.row_pointer}, column {self.col_pointer}")
 
-        
-        self.button.grid(row=self.row_pointer, column=self.col_pointer + 1, padx=5, pady=5)
-        self.button2.grid(row=self.row_pointer, column=self.col_pointer + 1, padx=5, pady=5)
-        
-                
 
-        task_entries[self.starting_row] = self
+    def update_grid_positions(self):
+        # Update the grid positions of the task textbox
+        for idx, widget in enumerate(self.value):
+            widget.grid(row=self.row_pointer, column=self.col_pointer + idx, padx=5, pady=5)
+
+        # Update the grid positions of the buttons
+        self.button.grid(row=self.row_pointer, column=self.col_pointer + len(self.value) + 1, padx=5, pady=5, sticky="n,w")
+        self.button2.grid(row=self.row_pointer, column=self.col_pointer + len(self.value) + 2, padx=5, pady=5, sticky="s,w")
+
+
+
                 
-# Moves each of the task rows down
 def shift_down(row):
+    print("\n!shifting down")
     for item in range(row, len(task_entries)):
-        task_entries[item].row_pointer += 1
-        
-        newrow=task_entries[item].row_pointer
-        print(f"\nThe starting row of {task_entries[item].name} is {newrow}\n")
-        for widget in task_frame.winfo_children():
-            grid_info = widget.grid_info()
-            # print(grid_info)
-            if grid_info["row"] == newrow - 1:
-                print(f"I should be moving the items on row {newrow - 1} to row {newrow}")
-                widget.grid(row=newrow+1)
+        task_entries[item].row_pointer += 1  # Move the row pointer down
 
-# Moves each of the task rows up
+        # Update all widgets for the task entry
+        task_entries[item].update_grid_positions()
+
+
 def shift_up(row):
-    print("shifting up")
-    for item in range(row, len(task_entries)):
-        task_entries[item].row_pointer -= 1
-        
-        newrow=task_entries[item].row_pointer
-        print(f"\nThe starting row of {task_entries[item].name} is {newrow}\n")
-        for widget in task_frame.winfo_children():
-            grid_info = widget.grid_info()
-            # print(grid_info)
-            if grid_info["row"] == newrow:
-                print(f"I should be moving the items on row {newrow} to row {newrow-1}")
-                widget.grid(row=newrow-1)
+    print("\n!shifting up")
+    for item in range(row + 1, len(task_entries)):
+        task_entries[item].row_pointer -= 1  # Move the row pointer up
+
+        # Update all widgets for the task entry
+        task_entries[item].update_grid_positions()
+
+
 
 
 # Function to handle the names entered in the second tab
