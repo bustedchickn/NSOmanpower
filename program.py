@@ -21,6 +21,7 @@ class variable_task_list():
             self.row_pointer += 1
             self.col_pointer = 2
             shift_down(self.row_pointer)
+            
                     
         task_textbox = ctk.CTkTextbox(task_frame, width=325, height=100)
         task_textbox.grid(row=self.row_pointer, column=self.col_pointer, padx=5, pady=5)
@@ -28,7 +29,7 @@ class variable_task_list():
         self.button.grid(row=self.row_pointer, column=self.col_pointer+1, padx=5, pady=5)
         self.button2.grid(row=self.row_pointer, column=self.col_pointer+1, padx=5, pady=5)
                     
-        print(f"created in column {self.col_pointer} with the button in {self.col_pointer+1}")
+        print(f"{self.name} created a textbox in gridspace {self.col_pointer}, {self.row_pointer} with the button in {self.col_pointer+1}")
 
                     
         
@@ -57,22 +58,22 @@ class variable_task_list():
 # Moves each of the task rows down
 def shift_down(row):
     print("\n!shifting down")
-    for item in range(row, len(task_entries)):
+    for item in range(task_entries[len(task_entries)-1].row_pointer,row-1,-1):
         task_entries[item].row_pointer += 1
         
         newrow=task_entries[item].row_pointer
-        print(f"\nThe starting row of {task_entries[item].name} is {newrow}\n")
+        input(f"\nThe starting row of {task_entries[item].name} is {newrow}\n")
         for widget in task_frame.winfo_children():
             grid_info = widget.grid_info()
             # print(grid_info)
             if grid_info["row"] == newrow - 1:
-                print(f"I should be moving the items on row {newrow - 1} to row {newrow}")
-                widget.grid(row=newrow+1)
+                input(f"I should be moving the items on row {newrow - 1} to row {newrow}")
+                widget.grid(row=newrow)
 
 # Moves each of the task rows up
 def shift_up(row):
     print("\n!shifting up")
-    for item in range(row+1, len(task_entries)):
+    for item in range(task_entries[len(task_entries)-1].row_pointer,row,-1):
         task_entries[item].row_pointer -= 1
         
         newrow=task_entries[item].row_pointer
@@ -82,7 +83,7 @@ def shift_up(row):
             # print(grid_info)
             if grid_info["row"] == newrow:
                 print(f"I should be moving the items on row {newrow} to row {newrow-1}")
-                widget.grid(row=newrow-1)
+                widget.grid(row=newrow)
 
 
 def update_tasks():
