@@ -18,9 +18,10 @@ class variable_task_list():
         # Generate Events
         self.col_pointer += 1
         if (self.col_pointer > 5):
-            self.row_pointer += 1
+            print("Asking to shift down")
+            # self.row_pointer += 1
             self.col_pointer = 2
-            shift_down(self.row_pointer)
+            shift_down(self.row_pointer+1)
             
                     
         task_textbox = ctk.CTkTextbox(task_frame, width=325, height=100)
@@ -32,58 +33,67 @@ class variable_task_list():
         print(f"{self.name} created a textbox in gridspace {self.col_pointer}, {self.row_pointer} with the button in {self.col_pointer+1}")
 
                     
-        
+        self.button2.configure(text="Delete a task")
         task_entries[self.starting_row] = self
     
     def remove_tasks(self):
         
-        self.value.pop().destroy()
-        self.col_pointer -= 1
-        if (self.col_pointer<2):
-            self.row_pointer -= 1
-            self.col_pointer = 5
-            shift_up(self.row_pointer)
+        if len(self.value) > 1:
 
-        print(f"{self.name} says, 'My row pointer is at {self.row_pointer}'")
-        print(f"{self.name} says, 'My col pointer is at {self.col_pointer}'")
+            self.value.pop().destroy()
+            self.col_pointer -= 1
+            if (self.col_pointer<2):
+                print("Asking to shift up")
+                # self.row_pointer -= 1
+                # if self.row_pointer <= 0 : self.row_pointer = 0
+                self.col_pointer = 5
+                shift_up(self.row_pointer-1)
 
-        
-        self.button.grid(row=self.row_pointer, column=self.col_pointer + 1, padx=5, pady=5)
-        self.button2.grid(row=self.row_pointer, column=self.col_pointer + 1, padx=5, pady=5)
-        
-                
-        
-        task_entries[self.starting_row] = self
+            print(f"{self.name} says, 'My row pointer is at {self.row_pointer}'")
+            print(f"{self.name} says, 'My col pointer is at {self.col_pointer}'")
+
+            
+            self.button.grid(row=self.row_pointer, column=self.col_pointer + 1, padx=5, pady=5)
+            self.button2.grid(row=self.row_pointer, column=self.col_pointer + 1, padx=5, pady=5)
+            
+                    
+            
+            task_entries[self.starting_row] = self
+        else: self.button2.configure(text="Must have 1 task")
                 
 # Moves each of the task rows down
 def shift_down(row):
     print("\n!shifting down")
-    for item in range(task_entries[len(task_entries)-1].row_pointer,row-1,-1):
-        task_entries[item].row_pointer += 1
+    
+    for item in task_entries:
+        print(f"The name of the row you are trying to move is {item.name}")
+        if item.row_pointer >= row-1:
+            item.row_pointer += 1
+            print(f"\nThe starting row of {item.name} is {item.row_pointer}\n")
+    for widget in task_frame.winfo_children():
+        grid_info = widget.grid_info()
         
-        newrow=task_entries[item].row_pointer
-        input(f"\nThe starting row of {task_entries[item].name} is {newrow}\n")
-        for widget in task_frame.winfo_children():
-            grid_info = widget.grid_info()
-            # print(grid_info)
-            if grid_info["row"] == newrow - 1:
-                input(f"I should be moving the items on row {newrow - 1} to row {newrow}")
-                widget.grid(row=newrow)
+        if grid_info["row"] >= row:
+            
+            widget.grid(row=grid_info["row"]+1)
 
 # Moves each of the task rows up
 def shift_up(row):
     print("\n!shifting up")
-    for item in range(task_entries[len(task_entries)-1].row_pointer,row,-1):
-        task_entries[item].row_pointer -= 1
+    
+    for item in task_entries:
+        if item.row_pointer >= row:
+            item.row_pointer -= 1
+            if item.row_pointer <= 0 : item.row_pointer = 0
+            
         
-        newrow=task_entries[item].row_pointer
-        print(f"\nThe starting row of {task_entries[item].name} is {newrow}\n")
-        for widget in task_frame.winfo_children():
-            grid_info = widget.grid_info()
-            # print(grid_info)
-            if grid_info["row"] == newrow:
-                print(f"I should be moving the items on row {newrow} to row {newrow-1}")
-                widget.grid(row=newrow)
+        print(f"\nThe starting row of {item.name} is {item.row_pointer}\n")
+    for widget in task_frame.winfo_children():
+        grid_info = widget.grid_info()
+        
+        if grid_info["row"] > row:
+            
+            widget.grid(row=grid_info["row"]-1)
 
 
 def update_tasks():
