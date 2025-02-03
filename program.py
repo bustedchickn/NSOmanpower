@@ -134,7 +134,7 @@ def create_event_fields(count, start_index=0):
         event_entry.pack(side="left", padx=5, expand=True, fill="x")
 
         # Create Time Entry
-        time_entry = ctk.CTkEntry(row_frame, placeholder_text="Time (ex: 10:00 AM)")
+        time_entry = ctk.CTkEntry(row_frame, placeholder_text="Time (ex: 10:00 AM - 11:00 AM)")
         time_entry.pack(side="left", padx=5, expand=True, fill="x")
 
         # Track the fields and their frames
@@ -160,10 +160,15 @@ def showentries():
 
 # Function to handle the names entered in the second tab
 def process_names():
-    global names_list
-    raw_text = names_textbox.get("1.0", "end").strip()
-    names_list = [name.strip() for name in raw_text.splitlines() if name.strip()]  # Clean up names
-    label_names_status.configure(text=f"Processed {len(names_list)} names!", text_color="green")
+    global pam_names_list
+    global nsm_names_list
+    global master_names_list
+    raw_text = pam_names_textbox.get("1.0", "end").strip()
+    pam_names_list = [name.strip() for name in raw_text.splitlines() if name.strip()]  # Clean up names
+    raw_text = nsm_names_textbox.get("1.0", "end").strip()
+    nsm_names_list = [name.strip() for name in raw_text.splitlines() if name.strip()]  # Clean up names
+    master_names_list = pam_names_list + nsm_names_list
+    label_names_status.configure(text=f"Processed {len(master_names_list)} names!", text_color="green")
     global namesconfirm 
     namesconfirm = True
 
@@ -240,14 +245,14 @@ def populate_spreadsheet():
         header_label.grid(row=0, column=col + 1, padx=5, pady=5)
 
     # Generate rows (names) and cells
-    for row, name in enumerate(names_list):
+    for row, name in enumerate(master_names_list):
         # Name label on the left side
         name_label = ctk.CTkLabel(spreadsheet_frame, text=name, font=("Helvetica", 12))
         name_label.grid(row=row + 1, column=0, padx=5, pady=5)
 
         # Editable cells for each event
         for col in range(len(event_entries)):
-            cell = ctk.CTkEntry(spreadsheet_frame, placeholder_text=    "", width=100)
+            cell = ctk.CTkTextbox(spreadsheet_frame, placeholder_text="", width=200,height=100)
             cell.grid(row=row + 1, column=col + 1, padx=5, pady=5)
 
 # Function to get the list of stuff.
@@ -269,7 +274,9 @@ event_entries = []
 time_entries = []
 task_entries = []
 entry_frames = []
-names_list = []
+pam_names_list = []
+nsm_names_list = []
+master_names_list = []
 
 tasksconfirm = False
 eventsconfirm = False
@@ -313,8 +320,8 @@ entries_frame = ctk.CTkFrame(scrollable_frame)
 entries_frame.pack(pady=10, fill="both", expand=True)
 
 # Show Entries Button
-btn_show = ctk.CTkButton(event_tab, text="Show Entries", command=showentries)
-btn_show.pack(pady=10)
+btn_show = ctk.CTkButton(scrollable_frame, text="Show Entries", command=showentries)
+btn_show.pack(side="bottom",pady=10)
 
 # Tab 2: Name Input
 names_tab = tabview.add("Names")
@@ -327,16 +334,29 @@ names_title.pack(pady=10)
 instruction = ctk.CTkLabel(names_tab, text="Enter each name on a new line", text_color="black", font=("Helvetica", 14, "italic"))
 instruction.pack()
 
+names_scrollable = ctk.CTkScrollableFrame(names_tab, width=850, height=400)
+names_scrollable.pack(pady=10, fill="both", expand=True)
+
+pamlbl = ctk.CTkLabel(names_scrollable, text="PAM", text_color="black", font=("Helvetica", 18, "bold"))
+pamlbl.pack(pady=(10,0))
+
 # Multiline Textbox for names
-names_textbox = ctk.CTkTextbox(names_tab, width=800, height=350)
-names_textbox.pack(pady=10)
+pam_names_textbox = ctk.CTkTextbox(names_scrollable, width=500, height=350)
+pam_names_textbox.pack(pady=(0,10))
+
+nsmlbl = ctk.CTkLabel(names_scrollable, text="NSM", text_color="black", font=("Helvetica", 18, "bold"))
+nsmlbl.pack(pady=(10,0))
+
+# Multiline Textbox for names
+nsm_names_textbox = ctk.CTkTextbox(names_scrollable, width=500, height=350)
+nsm_names_textbox.pack(pady=(0,10))
 
 # Process Names Button
-btn_process_names = ctk.CTkButton(names_tab, text="Process Names", command=process_names)
+btn_process_names = ctk.CTkButton(names_scrollable, text="Process Names", command=process_names)
 btn_process_names.pack(pady=10)
 
 # Label to show the status of name processing
-label_names_status = ctk.CTkLabel(names_tab, text="")
+label_names_status = ctk.CTkLabel(names_scrollable, text="")
 label_names_status.pack(pady=10)
 
 # Tab 3: Task List
