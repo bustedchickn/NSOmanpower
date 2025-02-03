@@ -95,134 +95,6 @@ def shift_up(row):
             
             widget.grid(row=grid_info["row"]-1)
 
-
-def update_tasks():
-    for widget in task_frame.winfo_children():
-        widget.destroy()
-    row = 0
-    for object in task_entries:
-        col = 2
-
-        # spacing for asthetics
-        spacer = ctk.CTkLabel(task_frame, text="",width=100)
-        spacer.grid(row=row, column=0, padx=10, pady=5)
-        event_label = ctk.CTkLabel(task_frame, text=object.name, font=("Helvetica", 12, "bold"))
-        event_label.grid(row=row, column=1, padx=10, pady=5)
-        for item in object.value:
-            task_textbox = ctk.CTkTextbox(task_frame, width=325, height=100)
-            task_textbox.grid(row=row, column=col, padx=5, pady=5)
-            col += 1
-            if col > 5:
-                row += 1
-                col = 2
-
-        task_button = ctk.CTkButton(task_frame, text="Delete a task", command=object.remove_tasks)
-        task_button.grid(row=row, column=col+1, padx=5, pady=5, sticky="s,w")
-        
-        object.button2 = task_button
-        
-        task_button = ctk.CTkButton(task_frame, text="Add a task")
-        task_button.grid(row=row, column=3, padx=5, pady=5, sticky="n,w", command=object.add_tasks)
-        object.button = task_button
-        row+=1
-
-# Do the stuff in here about redrawing the whole thing.
-
-# Function to handle the names entered in the second tab
-def process_names():
-    global names_list
-    raw_text = names_textbox.get("1.0", "end").strip()
-    names_list = [name.strip() for name in raw_text.splitlines() if name.strip()]  # Clean up names
-    label_names_status.configure(text=f"Processed {len(names_list)} names!", text_color="green")
-    populate_spreadsheet()  # Update the grid with the names
-
-# Function to populate the spreadsheet
-def populate_spreadsheet():
-    instruction_tab4.destroy()
-
-    # Clear existing grid
-    for widget in spreadsheet_frame.winfo_children():
-        widget.destroy()
-
-    # Generate headers (events)
-    for col, (event_entry, time_entry) in enumerate(zip(event_entries, time_entries)):
-        header_label = ctk.CTkLabel(spreadsheet_frame, text=f"{event_entry.get()}\n{time_entry.get()}", font=("Helvetica", 12, "bold"))
-        header_label.grid(row=0, column=col + 1, padx=5, pady=5)
-
-    # Generate rows (names) and cells
-    for row, name in enumerate(names_list):
-        # Name label on the left side
-        name_label = ctk.CTkLabel(spreadsheet_frame, text=name, font=("Helvetica", 12))
-        name_label.grid(row=row + 1, column=0, padx=5, pady=5)
-
-        # Editable cells for each event
-        for col in range(len(event_entries)):
-            cell = ctk.CTkEntry(spreadsheet_frame, placeholder_text=    "", width=100)
-            cell.grid(row=row + 1, column=col + 1, padx=5, pady=5)
-
-# Function to create the tasks gui
-def intialize_tasks():
-    instruction_tab3.destroy()
-
-    # Clear existing grid
-    for widget in task_frame.winfo_children():
-        widget.destroy()
-
-    # Generate Events
-    for row, (event_entry, time_entry) in enumerate(zip(event_entries, time_entries)):
-        
-        # Create a new list that holds the tasks
-        l = variable_task_list(f"{event_entry.get()}\n{time_entry.get()}",2,row)
-        print(f"l.name is {l.name}")
-        print(f"l.value is {l.name}")
-        
-        # spacing for asthetics
-        spacer = ctk.CTkLabel(task_frame, text="",width=100)
-        spacer.grid(row=row, column=0, padx=10, pady=5)
-
-        # Title label
-        event_label = ctk.CTkLabel(task_frame, text=f"{event_entry.get()}\n{time_entry.get()}", font=("Helvetica", 12, "bold"))
-        event_label.grid(row=row, column=1, padx=10, pady=5)
-        task_textbox = ctk.CTkTextbox(task_frame, width=325, height=100)
-        task_textbox.grid(row=row, column=2, padx=5, pady=5)
-        l.appended(task_textbox)
-
-        # Add the button for removing tasks
-        task_button = ctk.CTkButton(task_frame, text="Delete a task")
-        task_button.grid(row=row, column=3, padx=5, pady=5, sticky="s,w")
-
-        l.button2 = task_button
-        l.button2.configure(command=l.remove_tasks)
-        print("Button configured")
-
-
-        # Add the button for adding tasks
-        task_button = ctk.CTkButton(task_frame, text="Add a task")
-        task_button.grid(row=row, column=3, padx=5, pady=5, sticky="n,w")
-
-        l.button = task_button
-        l.button.configure(command=l.add_tasks)
-        print("Button configured")
-        
-        task_entries.append(l)
-        print(f"task_entries is now {task_entries}")
-
-
-
-
-
-
-
-
-
-
-
-# Function to display event and time entries
-def showentries():
-    for i, (event_entry, time_entry) in enumerate(zip(event_entries, time_entries)):
-        print(f"Event {i + 1}: {event_entry.get()} at {time_entry.get()}")
-    intialize_tasks()
-
 # Function to handle initial event creation
 def submit():
     user_input = event_num_entry.get()
@@ -278,6 +150,115 @@ def remove_event_fields(count):
         time_entries.pop().destroy()
         last_frame.destroy()
 
+# Function to display event and time entries
+def showentries():
+    for i, (event_entry, time_entry) in enumerate(zip(event_entries, time_entries)):
+        print(f"Event {i + 1}: {event_entry.get()} at {time_entry.get()}")
+    global eventsconfirm 
+    eventsconfirm = True
+    intialize_tasks()
+
+# Function to handle the names entered in the second tab
+def process_names():
+    global names_list
+    raw_text = names_textbox.get("1.0", "end").strip()
+    names_list = [name.strip() for name in raw_text.splitlines() if name.strip()]  # Clean up names
+    label_names_status.configure(text=f"Processed {len(names_list)} names!", text_color="green")
+    global namesconfirm 
+    namesconfirm = True
+
+# Function to create the tasks gui
+def intialize_tasks():
+    instruction_tab3.destroy()
+
+    # Clear existing grid
+    for widget in task_frame.winfo_children():
+        widget.destroy()
+
+    # Generate Events
+    for row, (event_entry, time_entry) in enumerate(zip(event_entries, time_entries)):
+        
+        # Create a new list that holds the tasks
+        l = variable_task_list(f"{event_entry.get()}\n{time_entry.get()}",2,row)
+        print(f"l.name is {l.name}")
+        print(f"l.value is {l.name}")
+        
+        # spacing for asthetics
+        spacer = ctk.CTkLabel(task_frame, text="",width=100)
+        spacer.grid(row=row, column=0, padx=10, pady=5)
+
+        # Title label
+        event_label = ctk.CTkLabel(task_frame, text=f"{event_entry.get()}\n{time_entry.get()}", font=("Helvetica", 12, "bold"))
+        event_label.grid(row=row, column=1, padx=10, pady=5)
+        task_textbox = ctk.CTkTextbox(task_frame, width=325, height=100)
+        task_textbox.grid(row=row, column=2, padx=5, pady=5)
+        l.appended(task_textbox)
+
+        # Add the button for removing tasks
+        task_button = ctk.CTkButton(task_frame, text="Delete a task")
+        task_button.grid(row=row, column=3, padx=5, pady=5, sticky="s,w")
+
+        l.button2 = task_button
+        l.button2.configure(command=l.remove_tasks)
+        print("Button configured")
+
+
+        # Add the button for adding tasks
+        task_button = ctk.CTkButton(task_frame, text="Add a task")
+        task_button.grid(row=row, column=3, padx=5, pady=5, sticky="n,w")
+
+        l.button = task_button
+        l.button.configure(command=l.add_tasks)
+        print("Button configured")
+        
+        task_entries.append(l)
+        print(f"task_entries is now {task_entries}")
+
+# Function to lock in the tasks
+def confirmtasks():
+    global tasksconfirm 
+    tasksconfirm = True
+
+# Function to check everything is done do generate the spreadsheet
+def checkconfirm():
+    if(namesconfirm and tasksconfirm and eventsconfirm):
+        populate_spreadsheet() 
+    else:
+        instruction_tab4.configure(text="Please process everything before generating.")
+
+# Function to populate the spreadsheet
+def populate_spreadsheet():
+    instruction_tab4.destroy()
+
+    # Clear existing grid
+    for widget in spreadsheet_frame.winfo_children():
+        widget.destroy()
+
+    # Generate headers (events)
+    for col, (event_entry, time_entry) in enumerate(zip(event_entries, time_entries)):
+        header_label = ctk.CTkLabel(spreadsheet_frame, text=f"{event_entry.get()}\n{time_entry.get()}", font=("Helvetica", 12, "bold"))
+        header_label.grid(row=0, column=col + 1, padx=5, pady=5)
+
+    # Generate rows (names) and cells
+    for row, name in enumerate(names_list):
+        # Name label on the left side
+        name_label = ctk.CTkLabel(spreadsheet_frame, text=name, font=("Helvetica", 12))
+        name_label.grid(row=row + 1, column=0, padx=5, pady=5)
+
+        # Editable cells for each event
+        for col in range(len(event_entries)):
+            cell = ctk.CTkEntry(spreadsheet_frame, placeholder_text=    "", width=100)
+            cell.grid(row=row + 1, column=col + 1, padx=5, pady=5)
+
+# Function to get the list of stuff.
+def obtaintasks():
+    
+    pass
+
+
+
+
+
 # Create the main window
 root = ctk.CTk()
 root.title("NSO MANPOWER SHEET")
@@ -289,6 +270,10 @@ time_entries = []
 task_entries = []
 entry_frames = []
 names_list = []
+
+tasksconfirm = False
+eventsconfirm = False
+namesconfirm = False
 
 # Add Tabview
 tabview = ctk.CTkTabview(root, width=850, height=550)
@@ -371,10 +356,9 @@ task_scrollable.pack(pady=10, fill="both", expand=True)
 task_frame = ctk.CTkFrame(task_scrollable)
 task_frame.pack(pady=10, fill="both", expand=True)
 
+btn_process_tasks = ctk.CTkButton(task_scrollable, text="Process tasks", command=confirmtasks)
+btn_process_tasks.pack(pady=10)
 
-# for i in range(3):
-#     task_frame.grid_rowconfigure(i, weight=1)     # Evenly distribute row space
-#     task_frame.grid_columnconfigure(i, weight=1)
 
 
 # Tab 4: Name Display (Spreadsheet)
@@ -388,6 +372,8 @@ spreadsheet_title.pack(pady=10)
 instruction_tab4 = ctk.CTkLabel(spreadsheet_tab, text="Please process events, names, and tasks in the previous tabs", text_color="black", font=("Helvetica", 14, "italic"))
 instruction_tab4.pack()
 
+btn_process_generate = ctk.CTkButton(spreadsheet_tab, text="Generate", command=checkconfirm)
+btn_process_generate.pack(pady=10)
 # Scrollable Frame for spreadsheet
 spreadsheet_scrollable = ctk.CTkScrollableFrame(spreadsheet_tab, width=850, height=400)
 spreadsheet_scrollable.pack(pady=10, fill="both", expand=True)
