@@ -60,7 +60,22 @@ class variable_task_list():
             
             task_entries[self.starting_row] = self
         else: self.button2.configure(text="Must have 1 task")
-                
+
+class taskdata():
+    def __init__(self, name):
+        self.name = name
+        self.pamdata = []
+        self.nsmdata = []
+        self.ambigdata = []
+
+
+
+
+
+
+
+
+
 # Moves each of the task rows down
 def shift_down(row):
     print("\n!shifting down")
@@ -168,7 +183,7 @@ def process_names():
     raw_text = nsm_names_textbox.get("1.0", "end").strip()
     nsm_names_list = [name.strip() for name in raw_text.splitlines() if name.strip()]  # Clean up names
     master_names_list = pam_names_list + nsm_names_list
-    label_names_status.configure(text=f"Processed {len(master_names_list)} names!", text_color="green")
+    label_names_status.configure(text=f"Processed {len(master_names_list)} names!\nGo to the 'Tasks' tab to continue", text_color="green")
     global namesconfirm 
     namesconfirm = True
 
@@ -223,6 +238,7 @@ def intialize_tasks():
 def confirmtasks():
     global tasksconfirm 
     tasksconfirm = True
+    obtaintasks()
 
 # Function to check everything is done do generate the spreadsheet
 def checkconfirm():
@@ -257,8 +273,36 @@ def populate_spreadsheet():
 
 # Function to get the list of stuff.
 def obtaintasks():
+    for i in task_entries:
+        nc = taskdata(i.name)
+        for j in i.value:
+            rawtext = j.get("1.0", "end").strip()
+            if(rawtext.upper().startswith("PAM")):
+                words = rawtext.split()
+                words.pop(0)
+                newtext = " ".join(words)
+                print("this is for PAM")
+                nc.pamdata.append(newtext)
+            elif(rawtext.upper().startswith("NSM")):
+                words = rawtext.split()
+                words.pop(0)
+                newtext = " ".join(words)
+                print("this is for NSM")
+                nc.nsmdata.append(newtext)
+            else:
+                words = rawtext.split()
+                if words[0].lower() == "all" or words[0].lower() == "everyone": words.pop(0)
+                newtext = " ".join(words)
+                print("this is for everyone")
+                nc.ambigdata.append(newtext)
+        task_data_list.append(nc)
+    gettasks()
+def gettasks():
+    for i in task_data_list:
+        print(f"{i.name} has {i.pamdata} for PAM")
+        print(f"{i.name} has {i.nsmdata} for NSM")
+        print(f"{i.name} has {i.ambigdata} for everyone")
     
-    pass
 
 
 # Function to export as an excel spreadsheet
@@ -276,6 +320,7 @@ root.geometry("900x600")
 event_entries = []
 time_entries = []
 task_entries = []
+task_data_list = []
 entry_frames = []
 pam_names_list = []
 nsm_names_list = []
