@@ -252,7 +252,7 @@ def populate_spreadsheet():
 
         # Editable cells for each event
         for col in range(len(event_entries)):
-            cell = ctk.CTkTextbox(spreadsheet_frame, placeholder_text="", width=200,height=100)
+            cell = ctk.CTkTextbox(spreadsheet_frame, width=200,height=100)
             cell.grid(row=row + 1, column=col + 1, padx=5, pady=5)
 
 # Function to get the list of stuff.
@@ -261,6 +261,9 @@ def obtaintasks():
     pass
 
 
+# Function to export as an excel spreadsheet
+def export():
+    pass
 
 
 
@@ -400,6 +403,9 @@ spreadsheet_scrollable.pack(pady=10, fill="both", expand=True)
 
 spreadsheet_frame = ctk.CTkFrame(spreadsheet_scrollable)
 spreadsheet_frame.pack(pady=10, fill="both", expand=True)
+
+create_sheet_btn = ctk.CTkButton(spreadsheet_scrollable,text="Export as a spreadsheet",command=export)
+create_sheet_btn.pack(pady=10)
 
 # Run the application
 root.mainloop()
