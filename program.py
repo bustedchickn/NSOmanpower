@@ -330,6 +330,13 @@ tasksconfirm = False
 eventsconfirm = False
 namesconfirm = False
 
+
+# Add Taskbar
+progress_bar = ctk.CTkProgressBar(root)
+progress_bar.pack(pady=10, fill="x", padx=20)
+progress_bar.set(0)
+
+
 # Add Tabview
 tabview = ctk.CTkTabview(root, width=850, height=550)
 tabview.pack(pady=10, padx=10, fill="both", expand=True)
