@@ -122,6 +122,7 @@ def submit():
         label_result.configure(text="", text_color="black")
         create_event_fields(user_input)
         btn_submit.configure(command=eventUpdate)
+        animate_progress(0.1)
 
 # Function to dynamically update events
 def eventUpdate():
@@ -148,6 +149,9 @@ def create_event_fields(count, start_index=0):
         event_entry = ctk.CTkEntry(row_frame, placeholder_text=f"Event {start_index + i + 1}")
         event_entry.pack(side="left", padx=5, expand=True, fill="x")
 
+        event_entry.bind("<FocusIn>", lambda event, eid=i: on_focus_in(event, eid))
+        event_entry.bind("<FocusOut>", lambda event, eid=i: on_focus_out(event, eid))
+
         # Create Time Entry
         time_entry = ctk.CTkEntry(row_frame, placeholder_text="Time (ex: 10:00 AM - 11:00 AM)")
         time_entry.pack(side="left", padx=5, expand=True, fill="x")
@@ -172,6 +176,8 @@ def showentries():
     global eventsconfirm 
     eventsconfirm = True
     intialize_tasks()
+    animate_progress(0.25)
+    switch_tabs()
 
 # Function to handle the names entered in the second tab
 def process_names():
@@ -186,6 +192,8 @@ def process_names():
     label_names_status.configure(text=f"Processed {len(master_names_list)} names!\nGo to the 'Tasks' tab to continue", text_color="green")
     global namesconfirm 
     namesconfirm = True
+    animate_progress(0.4)
+    switch_tabs()
 
 # Function to create the tasks gui
 def intialize_tasks():
@@ -239,6 +247,8 @@ def confirmtasks():
     global tasksconfirm 
     tasksconfirm = True
     obtaintasks()
+    animate_progress(0.9)
+    switch_tabs()
 
 # Function to check everything is done do generate the spreadsheet
 def checkconfirm():
@@ -250,6 +260,7 @@ def checkconfirm():
 # Function to populate the spreadsheet
 def populate_spreadsheet():
     instruction_tab4.destroy()
+    animate_progress(0.95)
 
     # Clear existing grid
     for widget in spreadsheet_frame.winfo_children():
@@ -307,7 +318,43 @@ def gettasks():
 
 # Function to export as an excel spreadsheet
 def export():
-    pass
+    animate_progress(1)
+
+# Function to animate progress bar smoothly
+def animate_progress(target_value, step=0.02):
+    current_value = progress_bar.get()
+    if abs(current_value - target_value) > step:
+        new_value = current_value + step if current_value < target_value else current_value - step
+        progress_bar.set(new_value)
+        root.after(10, lambda: animate_progress(target_value, step))  # Recursively update
+    else:
+        progress_bar.set(target_value)  # Ensure it reaches exact target
+
+
+# Function to switch tabs automatically
+def switch_tabs():
+    current_index = tabs.index(tabview.get())  # Get current tab index
+    next_index = (current_index + 1) % 4  # Cycle through tabs (0 → 1 → 2 → 3 → 0)
+    tabview.set(tabs[next_index])  # Change the active tab
+
+def event_text_math():
+    progress_value = 0.1 + (len(modified_entries) / len(event_entries))/10
+    print(progress_value)
+    # 10% -> 20%
+    animate_progress(progress_value)
+
+def on_focus_in(event, entry_id):
+    active_entries.add(entry_id)
+    modified_entries.append(event_entries[entry_id])
+    event_text_math()
+
+def on_focus_out(event, entry_id):
+    active_entries.discard(entry_id)
+    if event_entries[entry_id].get() == '':
+        modified_entries.remove(event_entries[entry_id])
+    event_text_math()
+
+
 
 
 
@@ -325,6 +372,9 @@ entry_frames = []
 pam_names_list = []
 nsm_names_list = []
 master_names_list = []
+active_entries = set()
+modified_entries = []
+tabs = ["Events","Names","Tasks","Spreadsheet"]
 
 tasksconfirm = False
 eventsconfirm = False
