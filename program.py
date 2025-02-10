@@ -18,7 +18,7 @@ class variable_task_list():
         # Generate Events
         self.col_pointer += 1
         if (self.col_pointer > 5):
-            print("Asking to shift down")
+            # print("Asking to shift down")
             # self.row_pointer += 1
             self.col_pointer = 2
             shift_down(self.row_pointer+1)
@@ -30,7 +30,7 @@ class variable_task_list():
         self.button.grid(row=self.row_pointer, column=self.col_pointer+1, padx=5, pady=5)
         self.button2.grid(row=self.row_pointer, column=self.col_pointer+1, padx=5, pady=5)
                     
-        print(f"{self.name} created a textbox in gridspace {self.col_pointer}, {self.row_pointer} with the button in {self.col_pointer+1}")
+        # print(f"{self.name} created a textbox in gridspace {self.col_pointer}, {self.row_pointer} with the button in {self.col_pointer+1}")
 
                     
         self.button2.configure(text="Delete a task")
@@ -43,14 +43,14 @@ class variable_task_list():
             self.value.pop().destroy()
             self.col_pointer -= 1
             if (self.col_pointer<2):
-                print("Asking to shift up")
+                # print("Asking to shift up")
                 # self.row_pointer -= 1
                 # if self.row_pointer <= 0 : self.row_pointer = 0
                 self.col_pointer = 5
                 shift_up(self.row_pointer-1)
 
-            print(f"{self.name} says, 'My row pointer is at {self.row_pointer}'")
-            print(f"{self.name} says, 'My col pointer is at {self.col_pointer}'")
+            # print(f"{self.name} says, 'My row pointer is at {self.row_pointer}'")
+            # print(f"{self.name} says, 'My col pointer is at {self.col_pointer}'")
 
             
             self.button.grid(row=self.row_pointer, column=self.col_pointer + 1, padx=5, pady=5)
@@ -78,13 +78,13 @@ class taskdata():
 
 # Moves each of the task rows down
 def shift_down(row):
-    print("\n!shifting down")
+    # print("\n!shifting down")
     
     for item in task_entries:
-        print(f"The name of the row you are trying to move is {item.name}")
+        # print(f"The name of the row you are trying to move is {item.name}")
         if item.row_pointer >= row-1:
             item.row_pointer += 1
-            print(f"\nThe starting row of {item.name} is {item.row_pointer}\n")
+            # print(f"\nThe starting row of {item.name} is {item.row_pointer}\n")
     for widget in task_frame.winfo_children():
         grid_info = widget.grid_info()
         
@@ -94,7 +94,7 @@ def shift_down(row):
 
 # Moves each of the task rows up
 def shift_up(row):
-    print("\n!shifting up")
+    # print("\n!shifting up")
     
     for item in task_entries:
         if item.row_pointer >= row:
@@ -102,7 +102,7 @@ def shift_up(row):
             if item.row_pointer <= 0 : item.row_pointer = 0
             
         
-        print(f"\nThe starting row of {item.name} is {item.row_pointer}\n")
+        # print(f"\nThe starting row of {item.name} is {item.row_pointer}\n")
     for widget in task_frame.winfo_children():
         grid_info = widget.grid_info()
         
@@ -171,8 +171,8 @@ def remove_event_fields(count):
 
 # Function to display event and time entries
 def showentries():
-    for i, (event_entry, time_entry) in enumerate(zip(event_entries, time_entries)):
-        print(f"Event {i + 1}: {event_entry.get()} at {time_entry.get()}")
+    # for i, (event_entry, time_entry) in enumerate(zip(event_entries, time_entries)):
+    #     print(f"Event {i + 1}: {event_entry.get()} at {time_entry.get()}")
     global eventsconfirm 
     eventsconfirm = True
     intialize_tasks()
@@ -208,8 +208,8 @@ def intialize_tasks():
         
         # Create a new list that holds the tasks
         l = variable_task_list(f"{event_entry.get()}\n{time_entry.get()}",2,row)
-        print(f"l.name is {l.name}")
-        print(f"l.value is {l.name}")
+        # print(f"l.name is {l.name}")
+        # print(f"l.value is {l.name}")
         
         # spacing for asthetics
         spacer = ctk.CTkLabel(task_frame, text="",width=100)
@@ -228,7 +228,7 @@ def intialize_tasks():
 
         l.button2 = task_button
         l.button2.configure(command=l.remove_tasks)
-        print("Button configured")
+        # print("Button configured")
 
 
         # Add the button for adding tasks
@@ -237,10 +237,10 @@ def intialize_tasks():
 
         l.button = task_button
         l.button.configure(command=l.add_tasks)
-        print("Button configured")
+        # print("Button configured")
         
         task_entries.append(l)
-        print(f"task_entries is now {task_entries}")
+        # print(f"task_entries is now {task_entries}")
 
 # Function to lock in the tasks
 def confirmtasks():
@@ -261,6 +261,15 @@ def checkconfirm():
 def populate_spreadsheet():
     instruction_tab4.destroy()
     animate_progress(0.95)
+
+    master_PAM_tasks = 0
+    master_NSM_tasks = 0
+    master_all_tasks = 0
+
+    for x in task_data_list:
+        master_PAM_tasks += len(x.pamdata)
+        master_NSM_tasks += len(x.nsmdata)
+        master_all_tasks += len(x.ambigdata)
 
     # Clear existing grid
     for widget in spreadsheet_frame.winfo_children():
@@ -292,20 +301,20 @@ def obtaintasks():
                 words = rawtext.split()
                 words.pop(0)
                 newtext = " ".join(words)
-                print("this is for PAM")
+                # print("this is for PAM")
                 nc.pamdata.append(newtext)
             elif(rawtext.upper().startswith("NSM")):
                 words = rawtext.split()
                 words.pop(0)
                 newtext = " ".join(words)
-                print("this is for NSM")
+                # print("this is for NSM")
                 nc.nsmdata.append(newtext)
             else:
                 words = rawtext.split()
-                if words[0].lower() == "all" or words[0].lower() == "everyone": words.pop(0)
-                newtext = " ".join(words)
-                print("this is for everyone")
-                nc.ambigdata.append(newtext)
+                if rawtext != "":
+                    if words[0].lower() == "all" or words[0].lower() == "everyone": words.pop(0)
+                    newtext = " ".join(words)
+                    nc.ambigdata.append(newtext)
         task_data_list.append(nc)
     gettasks()
 def gettasks():
@@ -321,12 +330,12 @@ def export():
     animate_progress(1)
 
 # Function to animate progress bar smoothly
-def animate_progress(target_value, step=0.02):
+def animate_progress(target_value, step=0.0005):
     current_value = progress_bar.get()
     if abs(current_value - target_value) > step:
         new_value = current_value + step if current_value < target_value else current_value - step
         progress_bar.set(new_value)
-        root.after(10, lambda: animate_progress(target_value, step))  # Recursively update
+        root.after(2, lambda: animate_progress(target_value))  # Recursively update
     else:
         progress_bar.set(target_value)  # Ensure it reaches exact target
 
@@ -339,14 +348,13 @@ def switch_tabs():
 
 def event_text_math():
     progress_value = 0.1 + (len(modified_entries) / len(event_entries))/10
-    print(progress_value)
     # 10% -> 20%
     animate_progress(progress_value)
 
 def on_focus_in(event, entry_id):
     active_entries.add(entry_id)
     modified_entries.append(event_entries[entry_id])
-    event_text_math()
+    # event_text_math()
 
 def on_focus_out(event, entry_id):
     active_entries.discard(entry_id)
