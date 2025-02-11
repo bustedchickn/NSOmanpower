@@ -26,6 +26,7 @@ class variable_task_list():
                     
         task_textbox = ctk.CTkTextbox(task_frame, width=325, height=100)
         task_textbox.grid(row=self.row_pointer, column=self.col_pointer, padx=5, pady=5)
+        task_textbox.insert(0.0,"\n\n\n\nNumber Required: ")
         self.appended(task_textbox)
         self.button.grid(row=self.row_pointer, column=self.col_pointer+1, padx=5, pady=5)
         self.button2.grid(row=self.row_pointer, column=self.col_pointer+1, padx=5, pady=5)
@@ -69,7 +70,10 @@ class taskdata():
         self.ambigdata = []
 
 
-
+class assignment():
+    def __init__(self, event, attribution):
+        self.event = event
+        self.attribution = attribution
 
 
 
@@ -220,6 +224,7 @@ def intialize_tasks():
         event_label.grid(row=row, column=1, padx=10, pady=5)
         task_textbox = ctk.CTkTextbox(task_frame, width=325, height=100)
         task_textbox.grid(row=row, column=2, padx=5, pady=5)
+        task_textbox.insert(0.0,"\n\n\n\nNumber Required: ")
         l.appended(task_textbox)
 
         # Add the button for removing tasks
@@ -330,12 +335,12 @@ def export():
     animate_progress(1)
 
 # Function to animate progress bar smoothly
-def animate_progress(target_value, step=0.0005):
+def animate_progress(target_value, step=0.001):
     current_value = progress_bar.get()
     if abs(current_value - target_value) > step:
         new_value = current_value + step if current_value < target_value else current_value - step
         progress_bar.set(new_value)
-        root.after(2, lambda: animate_progress(target_value))  # Recursively update
+        root.after(4, lambda: animate_progress(target_value))  # Recursively update
     else:
         progress_bar.set(target_value)  # Ensure it reaches exact target
 

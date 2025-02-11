@@ -1,11 +1,20 @@
-text = "Hello , world!\nThis is a test."
+import customtkinter as ctk
 
-word_to_remove = "Hello"
+# Initialize the main window
+root = ctk.CTk()
+root.geometry("500x300")
 
-# Check if the text starts with the word followed by space or punctuation
-if text.startswith(word_to_remove):
-    new_text = text[len(word_to_remove):].lstrip()  # Remove the word and strip leading spaces
-else:
-    new_text = text  # Keep the original text if the word isn't at the start
+# Create a frame to hold both text boxes
+frame = ctk.CTkFrame(root)
+frame.pack(pady=20, padx=20)
 
-print(new_text)
+# Create two text boxes
+text_box1 = ctk.CTkTextbox(frame, width=200, height=100)
+text_box1.pack(side="left", padx=10)
+
+text_box2 = ctk.CTkTextbox(frame, width=200, height=100)
+text_box2.pack(side="left", padx=10)
+
+text_box1.insert(0.0,"Hey this is the new text for textbox1!")
+
+root.mainloop()
