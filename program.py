@@ -14,7 +14,6 @@ class variable_task_list():
         self.value.append(value)
 
     def add_tasks(self):
-        
         # Generate Events
         self.col_pointer += 1
         if (self.col_pointer > 5):
@@ -22,25 +21,17 @@ class variable_task_list():
             # self.row_pointer += 1
             self.col_pointer = 2
             shift_down(self.row_pointer+1)
-            
-                    
         task_textbox = ctk.CTkTextbox(task_frame, width=325, height=100)
         task_textbox.grid(row=self.row_pointer, column=self.col_pointer, padx=5, pady=5)
         task_textbox.insert(0.0,"\n\n\n\nNumber Required: ")
         self.appended(task_textbox)
         self.button.grid(row=self.row_pointer, column=self.col_pointer+1, padx=5, pady=5)
         self.button2.grid(row=self.row_pointer, column=self.col_pointer+1, padx=5, pady=5)
-                    
-        # print(f"{self.name} created a textbox in gridspace {self.col_pointer}, {self.row_pointer} with the button in {self.col_pointer+1}")
-
-                    
         self.button2.configure(text="Delete a task")
         task_entries[self.starting_row] = self
     
     def remove_tasks(self):
-        
         if len(self.value) > 1:
-
             self.value.pop().destroy()
             self.col_pointer -= 1
             if (self.col_pointer<2):
@@ -49,16 +40,8 @@ class variable_task_list():
                 # if self.row_pointer <= 0 : self.row_pointer = 0
                 self.col_pointer = 5
                 shift_up(self.row_pointer-1)
-
-            # print(f"{self.name} says, 'My row pointer is at {self.row_pointer}'")
-            # print(f"{self.name} says, 'My col pointer is at {self.col_pointer}'")
-
-            
             self.button.grid(row=self.row_pointer, column=self.col_pointer + 1, padx=5, pady=5)
             self.button2.grid(row=self.row_pointer, column=self.col_pointer + 1, padx=5, pady=5)
-            
-                    
-            
             task_entries[self.starting_row] = self
         else: self.button2.configure(text="Must have 1 task")
 
@@ -70,10 +53,14 @@ class taskdata():
         self.ambigdata = []
 
 
-class assignment():
-    def __init__(self, event, attribution):
+class task():
+    def __init__(self, event,attribution, raw):
         self.event = event
         self.attribution = attribution
+        self.raw = raw
+        self.reqnum = 0
+    def clean(self):
+        pass
 
 
 
@@ -307,18 +294,26 @@ def obtaintasks():
                 words.pop(0)
                 newtext = " ".join(words)
                 # print("this is for PAM")
-                nc.pamdata.append(newtext)
+                t = task(nc,"PAM",newtext)
+                nc.pamdata.append(t)
             elif(rawtext.upper().startswith("NSM")):
                 words = rawtext.split()
                 words.pop(0)
                 newtext = " ".join(words)
                 # print("this is for NSM")
-                nc.nsmdata.append(newtext)
+                t = task(nc,"NSM",newtext)
+                nc.nsmdata.append(t)
             else:
                 words = rawtext.split()
-                if rawtext != "":
-                    if words[0].lower() == "all" or words[0].lower() == "everyone": words.pop(0)
+                if rawtext != "" or rawtext != "Number Required:":
+                    afiche = "all"
+                    if words[0].lower() == "all": 
+                        words.pop(0)
+                    elif words[0].lower() == "everyone":
+                        words.pop(0)
+                        afiche = "everyone"
                     newtext = " ".join(words)
+                    t = task(nc,afiche,newtext)
                     nc.ambigdata.append(newtext)
         task_data_list.append(nc)
     gettasks()
