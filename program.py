@@ -54,13 +54,14 @@ class taskdata():
 
 
 class task():
-    def __init__(self, event,attribution, raw):
+    def __init__(self, event,attribution, raw, req):
         self.event = event
         self.attribution = attribution
         self.raw = raw
-        self.reqnum = 0
+        self.reqnum = req
     def clean(self):
-        pass
+        raw = self.raw
+
 
 
 
@@ -291,29 +292,32 @@ def obtaintasks():
             rawtext = j.get("1.0", "end").strip()
             if(rawtext.upper().startswith("PAM")):
                 words = rawtext.split()
+                required = words[-1]
                 words.pop(0)
                 newtext = " ".join(words)
                 # print("this is for PAM")
-                t = task(nc,"PAM",newtext)
+                t = task(nc,"PAM",newtext,required)
                 nc.pamdata.append(t)
             elif(rawtext.upper().startswith("NSM")):
                 words = rawtext.split()
+                required = words[-1]
                 words.pop(0)
                 newtext = " ".join(words)
                 # print("this is for NSM")
-                t = task(nc,"NSM",newtext)
+                t = task(nc,"NSM",newtext,required)
                 nc.nsmdata.append(t)
             else:
                 words = rawtext.split()
-                if rawtext != "" or rawtext != "Number Required:":
+                if rawtext != "" or rawtext != "\n\n\n\nNumber Required: ":
                     afiche = "all"
+                    required = words[-1]
                     if words[0].lower() == "all": 
                         words.pop(0)
                     elif words[0].lower() == "everyone":
                         words.pop(0)
                         afiche = "everyone"
                     newtext = " ".join(words)
-                    t = task(nc,afiche,newtext)
+                    t = task(nc,afiche,newtext, required)
                     nc.ambigdata.append(newtext)
         task_data_list.append(nc)
     gettasks()
