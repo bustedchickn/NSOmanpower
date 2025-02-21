@@ -308,7 +308,7 @@ def obtaintasks():
                 nc.nsmdata.append(t)
             else:
                 words = rawtext.split()
-                if rawtext != "" or rawtext != "\n\n\n\nNumber Required: ":
+                if rawtext != "" and rawtext != "Number Required:":
                     afiche = "all"
                     required = words[-1]
                     if words[0].lower() == "all": 
@@ -318,7 +318,7 @@ def obtaintasks():
                         afiche = "everyone"
                     newtext = " ".join(words)
                     t = task(nc,afiche,newtext, required)
-                    nc.ambigdata.append(newtext)
+                    nc.ambigdata.append(t)
         task_data_list.append(nc)
     gettasks()
 def gettasks():
