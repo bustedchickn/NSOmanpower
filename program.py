@@ -1,4 +1,6 @@
 import customtkinter as ctk
+import math
+import random
 
 class variable_task_list():
     def __init__(self,name,col_pointer,starting_row):
@@ -59,8 +61,17 @@ class task():
         self.attribution = attribution
         self.raw = raw
         self.reqnum = req
+        self.original_reqnum = self.reqnum
+        self.clean()
     def clean(self):
         raw = self.raw
+        try:
+            self.reqnum = math.ceil(abs(int(self.reqnum)))
+        except:
+            self.reqnum = len(master_names_list)
+    def reset(self):
+        self.reqnum = self.original_reqnum
+
 
 
 
@@ -253,18 +264,22 @@ def checkconfirm():
 # Function to populate the spreadsheet
 def populate_spreadsheet():
     instruction_tab4.destroy()
+    gettasks()
     animate_progress(0.95)
 
     master_PAM_tasks = 0
     master_NSM_tasks = 0
     master_all_tasks = 0
 
+    # TODO This is really sus code and idk if it will stay
+
     for x in task_data_list:
         master_PAM_tasks += len(x.pamdata)
         master_NSM_tasks += len(x.nsmdata)
         master_all_tasks += len(x.ambigdata)
 
-    # Clear existing grid
+    # Clear existing grid 
+    '''Checks out'''
     for widget in spreadsheet_frame.winfo_children():
         widget.destroy()
 
@@ -274,7 +289,7 @@ def populate_spreadsheet():
         header_label.grid(row=0, column=col + 1, padx=5, pady=5)
 
     # Generate rows (names) and cells
-    for row, name in enumerate(master_names_list):
+    for row, name in enumerate(pam_names_list):
         # Name label on the left side
         name_label = ctk.CTkLabel(spreadsheet_frame, text=name, font=("Helvetica", 12))
         name_label.grid(row=row + 1, column=0, padx=5, pady=5)
@@ -283,6 +298,19 @@ def populate_spreadsheet():
         for col in range(len(event_entries)):
             cell = ctk.CTkTextbox(spreadsheet_frame, width=200,height=100)
             cell.grid(row=row + 1, column=col + 1, padx=5, pady=5)
+            # random.randint(0,len())
+    for row, name in enumerate(nsm_names_list):
+        # Name label on the left side
+        name_label = ctk.CTkLabel(spreadsheet_frame, text=name, font=("Helvetica", 12))
+        name_label.grid(row=row + len(pam_names_list) + 1, column=0, padx=5, pady=5)
+
+        # Editable cells for each event
+        for col in range(len(event_entries)):
+            colin = col+1
+            cell = ctk.CTkTextbox(spreadsheet_frame, width=200,height=100)
+            cell.grid(row=row + len(pam_names_list) + 1, column=colin, padx=5, pady=5)
+            
+            # TODO task_data_list[col] random.randint(0,len())
 
 # Function to get the list of stuff.
 def obtaintasks():
@@ -323,9 +351,16 @@ def obtaintasks():
     gettasks()
 def gettasks():
     for i in task_data_list:
-        print(f"{i.name} has {i.pamdata} for PAM")
-        print(f"{i.name} has {i.nsmdata} for NSM")
-        print(f"{i.name} has {i.ambigdata} for everyone")
+        
+        for j in i.pamdata:
+            j.reset()
+            print(f"{i.name} has {j.reqnum} for PAM")
+        for j in i.nsmdata:
+            j.reset()
+            print(f"{i.name} has {j.reqnum} for NSM")
+        for j in i.ambigdata:
+            j.reset()
+            print(f"{i.name} has {j.reqnum} for everyone")
     
 
 
