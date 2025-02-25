@@ -1,5 +1,12 @@
 import customtkinter as ctk
+import random
 
+
+x = ["rachel","susanna","sarah","LJ","Talmage"]
+print(x[random.randint(0,len(x))])
+
+
+'''
 # Initialize the main window
 root = ctk.CTk()
 root.geometry("500x300")
@@ -18,3 +25,4 @@ text_box2.pack(side="left", padx=10)
 text_box1.insert(0.0,"Hey this is the new text for textbox1!")
 
 root.mainloop()
+'''

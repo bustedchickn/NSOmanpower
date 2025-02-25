@@ -1,6 +1,8 @@
 import customtkinter as ctk
 import math
 import random
+import openpyxl
+import openpyxl.workbook
 
 class variable_task_list():
     def __init__(self,name,col_pointer,starting_row):
@@ -64,7 +66,7 @@ class task():
         self.original_reqnum = self.reqnum
         self.clean()
     def clean(self):
-        raw = self.raw
+        # self.raw
         try:
             self.reqnum = math.ceil(abs(int(self.reqnum)))
         except:
@@ -266,7 +268,7 @@ def populate_spreadsheet():
     instruction_tab4.destroy()
     gettasks()
     animate_progress(0.95)
-
+    '''
     master_PAM_tasks = 0
     master_NSM_tasks = 0
     master_all_tasks = 0
@@ -277,7 +279,7 @@ def populate_spreadsheet():
         master_PAM_tasks += len(x.pamdata)
         master_NSM_tasks += len(x.nsmdata)
         master_all_tasks += len(x.ambigdata)
-
+    '''
     # Clear existing grid 
     '''Checks out'''
     for widget in spreadsheet_frame.winfo_children():
@@ -296,9 +298,27 @@ def populate_spreadsheet():
 
         # Editable cells for each event
         for col in range(len(event_entries)):
+            colin = col+1
             cell = ctk.CTkTextbox(spreadsheet_frame, width=200,height=100)
-            cell.grid(row=row + 1, column=col + 1, padx=5, pady=5)
-            # random.randint(0,len())
+            cell.grid(row=row + 1, column=colin, padx=5, pady=5)
+            microlist = task_data_list[col].pamdata + task_data_list[col].ambigdata
+            # input(microlist)
+            if len(microlist) > 0:
+                rand = random.randint(0,len(microlist)-1)
+                selection = microlist[rand]
+                selection.clean()
+                visited_indexes = []
+                while selection.reqnum<=0 and len(visited_indexes)<len(microlist):
+                    visited_indexes.append(rand)
+                    rand = random.randint(0,len(microlist)-1)
+                    if not rand in visited_indexes:
+                        selection = microlist[rand]
+                if len(visited_indexes)>=len(microlist):
+                    cell.insert(0.0,"No task found")
+                else:
+                    cell.insert(0.0,selection.raw)
+                    selection.reqnum -= 1
+            else: cell.insert(0.0,"No task found")
     for row, name in enumerate(nsm_names_list):
         # Name label on the left side
         name_label = ctk.CTkLabel(spreadsheet_frame, text=name, font=("Helvetica", 12))
@@ -309,8 +329,25 @@ def populate_spreadsheet():
             colin = col+1
             cell = ctk.CTkTextbox(spreadsheet_frame, width=200,height=100)
             cell.grid(row=row + len(pam_names_list) + 1, column=colin, padx=5, pady=5)
-            
-            # TODO task_data_list[col] random.randint(0,len())
+            microlist = task_data_list[col].nsmdata + task_data_list[col].ambigdata
+            # input(microlist)
+            if len(microlist) > 0:
+                rand = random.randint(0,len(microlist)-1)
+                selection = microlist[rand]
+                selection.clean()
+                visited_indexes = []
+                while selection.reqnum<=0 and len(visited_indexes)<len(microlist):
+                    visited_indexes.append(rand)
+                    rand = random.randint(0,len(microlist)-1)
+                    if not rand in visited_indexes:
+                        selection = microlist[rand]
+                if len(visited_indexes)>=len(microlist):
+                    cell.insert(0.0,"No task found")
+                else:
+                    cell.insert(0.0,selection.raw)
+                    selection.reqnum -= 1
+            else: cell.insert(0.0,"No task found")
+
 
 # Function to get the list of stuff.
 def obtaintasks():
@@ -367,6 +404,27 @@ def gettasks():
 # Function to export as an excel spreadsheet
 def export():
     animate_progress(1)
+    wb = openpyxl.Workbook()
+    ws = wb.active
+
+    # Extract data from the frame
+    data = []
+    for widget in spreadsheet_frame.winfo_children():
+        if isinstance(widget, ctk.CTkTextbox) or isinstance(widget, ctk.CTkLabel):  # Modify if needed
+            data.append(widget.get() if hasattr(widget, 'get') else widget.cget("text"))
+
+    # Assume data is arranged in a row-major order (adjust if needed)
+    num_columns = len(event_entries)  # Set this based on your actual grid
+    rows = [data[i:i+num_columns] for i in range(0, len(data), num_columns)]
+
+    # Write to Excel
+    for row in rows:
+        ws.append(row)
+
+    # Save the workbook
+    wb.save("nso_manpowers.xlsx")
+    print("Excel file saved as 'nso_manpowers.xlsx'")
+
 
 # Function to animate progress bar smoothly
 def animate_progress(target_value, step=0.001):
