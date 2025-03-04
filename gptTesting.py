@@ -1,7 +1,3 @@
-def isPalindrome(text):
-  textlist = []
-  for letter in text:
-    textlist.insert(letter, -1)
-  newtext = textlist.join()
-  return text == newtext
-isPalindrome("racecar")
+import math
+# print(math.ceil(-104/9))
+print(((15)*(79)*78)%7)
