@@ -3,6 +3,8 @@ import math
 import random
 import openpyxl
 import openpyxl.workbook
+from tkinter import filedialog
+import os
 
 class variable_task_list():
     def __init__(self,name,col_pointer,starting_row):
@@ -408,21 +410,31 @@ def export():
     ws = wb.active
 
     # Extract data from the frame
-    data = []
+    data = [""]
     for widget in spreadsheet_frame.winfo_children():
         if isinstance(widget, ctk.CTkTextbox) or isinstance(widget, ctk.CTkLabel):  # Modify if needed
-            data.append(widget.get() if hasattr(widget, 'get') else widget.cget("text"))
+            data.append(widget.get("1.0", "end") if hasattr(widget, 'get') else widget.cget("text"))
 
     # Assume data is arranged in a row-major order (adjust if needed)
-    num_columns = len(event_entries)  # Set this based on your actual grid
-    rows = [data[i:i+num_columns] for i in range(0, len(data), num_columns)]
+    num_columns = len(event_entries)+1  # Set this based on your actual grid
+    rows = [data[i:i+num_columns] for i in range(0, len(data)+1, num_columns)]
 
     # Write to Excel
     for row in rows:
         ws.append(row)
 
+    file_path = filedialog.asksaveasfilename(
+        defaultextension=".xlsx", 
+        filetypes=[("Excel files", "*.xlsx")],
+        title="Save As"
+    )
+    
+    if file_path:  # If the user didn't cancel
+        
+        wb.save(file_path)
+        os.startfile(file_path)  # Open in Excel (Windows)
     # Save the workbook
-    wb.save("nso_manpowers.xlsx")
+    # wb.save("nso_manpowers.xlsx")
     print("Excel file saved as 'nso_manpowers.xlsx'")
 
 
