@@ -66,13 +66,27 @@ class task():
         self.raw = raw
         self.reqnum = req
         self.original_reqnum = self.reqnum
+        self.cleaned = False
         self.clean()
     def clean(self):
-        # self.raw
+        if not self.cleaned:
+            raw = self.raw
+            rawl = raw.split()
+            print(type(raw))
+            print(type(rawl))
+            if rawl.pop() == "Required:":
+                rawl.pop()
+                self.cleaned = True
+            else:
+                rawl.pop()
+                rawl.pop()
+                self.cleaned = True
+            self.raw = " ".join(rawl)
         try:
             self.reqnum = math.ceil(abs(int(self.reqnum)))
         except:
             self.reqnum = len(master_names_list)
+        
     def reset(self):
         self.reqnum = self.original_reqnum
 
@@ -433,9 +447,7 @@ def export():
         
         wb.save(file_path)
         os.startfile(file_path)  # Open in Excel (Windows)
-    # Save the workbook
-    # wb.save("nso_manpowers.xlsx")
-    print("Excel file saved as 'nso_manpowers.xlsx'")
+        print(f"Excel file saved as '{file_path}'")
 
 
 # Function to animate progress bar smoothly
