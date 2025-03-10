@@ -86,6 +86,7 @@ class task():
             self.reqnum = math.ceil(abs(int(self.reqnum)))
         except:
             self.reqnum = len(master_names_list)
+        # input(f"{self.reqnum} is a {type(self.reqnum)}")
         
     def reset(self):
         self.reqnum = self.original_reqnum
@@ -325,10 +326,12 @@ def populate_spreadsheet():
                 selection.clean()
                 visited_indexes = []
                 while selection.reqnum<=0 and len(visited_indexes)<len(microlist):
-                    visited_indexes.append(rand)
+                    if not rand in visited_indexes:
+                        visited_indexes.append(rand)
                     rand = random.randint(0,len(microlist)-1)
                     if not rand in visited_indexes:
                         selection = microlist[rand]
+                print(selection.raw)
                 if len(visited_indexes)>=len(microlist):
                     cell.insert(0.0,"No task found")
                 else:
@@ -353,10 +356,13 @@ def populate_spreadsheet():
                 selection.clean()
                 visited_indexes = []
                 while selection.reqnum<=0 and len(visited_indexes)<len(microlist):
-                    visited_indexes.append(rand)
+                    if not rand in visited_indexes:
+                        visited_indexes.append(rand)
                     rand = random.randint(0,len(microlist)-1)
                     if not rand in visited_indexes:
                         selection = microlist[rand]
+                    # print(visited_indexes)
+                print(selection.raw)
                 if len(visited_indexes)>=len(microlist):
                     cell.insert(0.0,"No task found")
                 else:
