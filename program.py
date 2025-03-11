@@ -5,6 +5,8 @@ import openpyxl
 import openpyxl.workbook
 from tkinter import filedialog
 import os
+import json
+import tkinter.colorchooser as colorchooser
 
 class variable_task_list():
     def __init__(self,name,col_pointer,starting_row):
@@ -93,10 +95,47 @@ class task():
 
 
 
+# File to store user preferences
+SETTINGS_FILE = "settings.json"
+
+# Function to load saved settings
+def load_settings():
+    try:
+        with open(SETTINGS_FILE, "r") as file:
+            return json.load(file)
+    except FileNotFoundError:
+        print("File not found")
+        return {"bg_color": "#2B2B2B", "fg_color": "#1F6AA5"}  # Default colors
+
+# Function to save settings
+def save_settings(settings):
+    with open(SETTINGS_FILE, "w") as file:
+        json.dump(settings, file, indent=4)
+
+# Function to change background color
+def change_bg_color():
+    color = colorchooser.askcolor()[1]  # Get HEX color
+    if color:
+        settings["bg_color"] = color
+        save_settings(settings)
+        root.configure(bg=color)
+
+# Function to change foreground (button) color
+def change_fg_color():
+    color = colorchooser.askcolor()[1]
+    if color:
+        settings["fg_color"] = color
+        save_settings(settings)
+        for button in button_list:
+            button.configure(fg_color=color)
 
 
-
-
+def set_theme():
+    ctk.set_appearance_mode("dark")
+    if ctk.get_appearance_mode() == "light":
+        ctk.set_appearance_mode("dark")
+    else:
+        ctk.set_appearance_mode("light")
 
 # Moves each of the task rows down
 def shift_down(row):
@@ -246,8 +285,9 @@ def intialize_tasks():
         l.appended(task_textbox)
 
         # Add the button for removing tasks
-        task_button = ctk.CTkButton(task_frame, text="Delete a task")
+        task_button = ctk.CTkButton(task_frame, text="Delete a task",fg_color=settings["fg_color"])
         task_button.grid(row=row, column=3, padx=5, pady=5, sticky="s,w")
+        button_list.append(task_button)
 
         l.button2 = task_button
         l.button2.configure(command=l.remove_tasks)
@@ -255,8 +295,9 @@ def intialize_tasks():
 
 
         # Add the button for adding tasks
-        task_button = ctk.CTkButton(task_frame, text="Add a task")
+        task_button = ctk.CTkButton(task_frame, text="Add a task",fg_color=settings["fg_color"])
         task_button.grid(row=row, column=3, padx=5, pady=5, sticky="n,w")
+        button_list.append(task_button)
 
         l.button = task_button
         l.button.configure(command=l.add_tasks)
@@ -282,6 +323,8 @@ def checkconfirm():
 
 # Function to populate the spreadsheet
 def populate_spreadsheet():
+    if not can_be_generated:
+        return
     instruction_tab4.destroy()
     gettasks()
     animate_progress(0.95)
@@ -420,6 +463,8 @@ def gettasks():
         for j in i.ambigdata:
             j.reset()
             print(f"{i.name} has {j.reqnum} for everyone")
+    global can_be_generated 
+    can_be_generated = True
     
 
 
@@ -491,12 +536,13 @@ def on_focus_out(event, entry_id):
 
 
 
-
+settings = load_settings()
 
 # Create the main window
 root = ctk.CTk()
 root.title("NSO MANPOWER SHEET")
 root.geometry("900x600")
+
 
 # Data structures to track widgets and names
 event_entries = []
@@ -511,10 +557,14 @@ active_entries = set()
 modified_entries = []
 tabs = ["Events","Names","Tasks","Spreadsheet"]
 
+
+button_list = []
+
+
 tasksconfirm = False
 eventsconfirm = False
 namesconfirm = False
-
+can_be_generated = False
 
 # Add Taskbar
 progress_bar = ctk.CTkProgressBar(root)
@@ -545,8 +595,9 @@ spacer = ctk.CTkLabel(event_tab, text="")
 spacer.pack(pady=20)
 
 # Submit Button
-btn_submit = ctk.CTkButton(event_tab, text="Generate Events", command=submit)
+btn_submit = ctk.CTkButton(event_tab, text="Generate Events", command=submit, fg_color=settings["fg_color"])
 btn_submit.pack(pady=10)
+button_list.append(btn_submit)
 
 # Label to display results or errors
 label_result = ctk.CTkLabel(event_tab, text="")
@@ -560,8 +611,9 @@ entries_frame = ctk.CTkFrame(scrollable_frame)
 entries_frame.pack(pady=10, fill="both", expand=True)
 
 # Show Entries Button
-btn_show = ctk.CTkButton(scrollable_frame, text="Show Entries", command=showentries)
+btn_show = ctk.CTkButton(scrollable_frame, text="Show Entries", command=showentries, fg_color=settings["fg_color"])
 btn_show.pack(side="bottom",pady=10)
+button_list.append(btn_show)
 
 # Tab 2: Name Input
 names_tab = tabview.add("Names")
@@ -592,8 +644,9 @@ nsm_names_textbox = ctk.CTkTextbox(names_scrollable, width=500, height=350)
 nsm_names_textbox.pack(pady=(0,10))
 
 # Process Names Button
-btn_process_names = ctk.CTkButton(names_scrollable, text="Process Names", command=process_names)
+btn_process_names = ctk.CTkButton(names_scrollable, text="Process Names", command=process_names, fg_color=settings["fg_color"])
 btn_process_names.pack(pady=10)
+button_list.append(btn_process_names)
 
 # Label to show the status of name processing
 label_names_status = ctk.CTkLabel(names_scrollable, text="")
@@ -616,8 +669,9 @@ task_scrollable.pack(pady=10, fill="both", expand=True)
 task_frame = ctk.CTkFrame(task_scrollable)
 task_frame.pack(pady=10, fill="both", expand=True)
 
-btn_process_tasks = ctk.CTkButton(task_scrollable, text="Process tasks", command=confirmtasks)
+btn_process_tasks = ctk.CTkButton(task_scrollable, text="Process tasks", command=confirmtasks, fg_color=settings["fg_color"])
 btn_process_tasks.pack(pady=10)
+button_list.append(btn_process_tasks)
 
 
 
@@ -632,8 +686,10 @@ spreadsheet_title.pack(pady=10)
 instruction_tab4 = ctk.CTkLabel(spreadsheet_tab, text="Please process events, names, and tasks in the previous tabs", text_color="black", font=("Helvetica", 14, "italic"))
 instruction_tab4.pack()
 
-btn_process_generate = ctk.CTkButton(spreadsheet_tab, text="Generate", command=checkconfirm)
+btn_process_generate = ctk.CTkButton(spreadsheet_tab, text="Generate", command=checkconfirm, fg_color=settings["fg_color"])
 btn_process_generate.pack(pady=10)
+button_list.append(btn_process_generate)
+
 # Scrollable Frame for spreadsheet
 spreadsheet_scrollable = ctk.CTkScrollableFrame(spreadsheet_tab, width=850, height=400)
 spreadsheet_scrollable.pack(pady=10, fill="both", expand=True)
@@ -641,8 +697,29 @@ spreadsheet_scrollable.pack(pady=10, fill="both", expand=True)
 spreadsheet_frame = ctk.CTkFrame(spreadsheet_scrollable)
 spreadsheet_frame.pack(pady=10, fill="both", expand=True)
 
-create_sheet_btn = ctk.CTkButton(spreadsheet_scrollable,text="Export as a spreadsheet",command=export)
+create_sheet_btn = ctk.CTkButton(spreadsheet_scrollable,text="Export as a spreadsheet",command=export, fg_color=settings["fg_color"])
 create_sheet_btn.pack(pady=10)
+button_list.append(create_sheet_btn)
+
+
+# Tab 5
+settings_tab = tabview.add("Settings")
+
+# Title for Tab 4
+settings_title = ctk.CTkLabel(settings_tab, text="Settings", text_color="black", font=("Helvetica", 18, "bold"))
+settings_title.pack(pady=10)
+
+# Instructions for Tab 4
+instruction_tab5 = ctk.CTkLabel(settings_tab, text="[instructions for how to help and also settings]", text_color="black", font=("Helvetica", 14, "italic"))
+instruction_tab5.pack()
+
+btn_color_toggle = ctk.CTkButton(settings_tab, text="Switch themes", command=change_bg_color,fg_color=settings["fg_color"])
+btn_color_toggle.pack(pady=10)
+button_list.append(btn_color_toggle)
+
+btn_fg_toggle = ctk.CTkButton(settings_tab, text="Change fg", fg_color=settings["fg_color"], command=change_fg_color)
+btn_fg_toggle.pack(pady=10)
+button_list.append(btn_fg_toggle)
 
 # Run the application
 root.mainloop()
