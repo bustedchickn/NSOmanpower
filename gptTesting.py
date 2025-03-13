@@ -23,15 +23,15 @@ def extended_euclidean(a, b):
         return gcd, x, y
 
 # Example usage for GCD(255, 60)
-a, b = 54, 61
-gcd, x, y = extended_euclidean(a, b)
+# a, b = 54, 61
+# gcd, x, y = extended_euclidean(a, b)
 
-print(f"GCD({a}, {b}) = {gcd}")
-print(f"Coefficients: x = {x}, y = {y}")
-print(f"Verification: {a}({x}) + {b}({y}) = {gcd}")  # Should equal gcd
+# print(f"GCD({a}, {b}) = {gcd}")
+# print(f"Coefficients: x = {x}, y = {y}")
+# print(f"Verification: {a}({x}) + {b}({y}) = {gcd}")  # Should equal gcd
 
 
-print("\n\n\n")
+# print("\n\n\n")
 
-print(-23%54)
+print(43//1)
 
