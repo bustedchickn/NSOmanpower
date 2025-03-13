@@ -1,4 +1,6 @@
 {
-    "bg_color": "#1fe07a",
-    "fg_color": "#004080"
+    "bg_color": "#bec800",
+    "fg_color": "#004080",
+    "accent_color": "#F7FF61",
+    "text_color": "#000000"
 }
