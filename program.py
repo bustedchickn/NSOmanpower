@@ -104,7 +104,7 @@ def load_settings():
         with open(SETTINGS_FILE, "r") as file:
             return json.load(file)
     except FileNotFoundError:
-        return {"bg_color": "#2B2B2B", "fg_color": "#1F6AA5", "text_color": "#FFFFFF", "accent_color": "#FFAA00"}
+        return {"bg_color": "#2B2B2B", "fg_color": "#1F6AA5", "text_color": "#FFFFFF", "label_text_color": "#FFFFFF","accent_color": "#FFAA00"}
 
 # Function to save settings
 def save_settings(settings):
@@ -132,17 +132,26 @@ def generate_accent_color(hex_color):
     new_r, new_g, new_b = hls_to_rgb(h, l, s)
     return f"#{int(new_r * 255):02X}{int(new_g * 255):02X}{int(new_b * 255):02X}"
 
+
+themed = False
 # Function to change background color
 def change_bg_color():
-    color = colorchooser.askcolor()[1]  # Get HEX color
+    color = colorchooser.askcolor()[1]
+    global themed
+    themed = False
     if color:
-        settings["bg_color"] = color
+        settings["fg_color"] = color
+        settings["label_text_color"] = "#000000" if is_light_color(color) else "#FFFFFF"  # Ensure readable text
         save_settings(settings)
-        root.configure(bg=color)
+        apply_colors()
+
+
 
 # Function to change foreground (button) color
 def change_fg_color():
     color = colorchooser.askcolor()[1]
+    global themed
+    themed = True
     if color:
         settings["bg_color"] = color
         settings["accent_color"] = generate_accent_color(color)
@@ -153,13 +162,18 @@ def change_fg_color():
 
 def apply_colors():
     progress_bar.configure(progress_color=settings["bg_color"])
+    if themed:
+        settings["fg_color"] = settings["accent_color"]
+    else:
+        progress_bar.configure(progress_color=settings["accent_color"])
     for button in button_list:
-        button.configure(fg_color=settings["bg_color"],text_color=settings["text_color"])
+        button.configure(fg_color=settings["bg_color"], text_color=settings["text_color"])
     for frame in frame_list:
-        frame.configure(fg_color=settings["accent_color"])
+        frame.configure(fg_color=settings["fg_color"])
     for label in label_list:
+        print(label)
         label.configure(text_color=settings["text_color"])
-    tabview.configure(segmented_button_selected_color=settings["bg_color"],fg_color=settings["accent_color"],text_color=settings["text_color"])
+    tabview.configure(segmented_button_selected_hover_color=settings["accent_color"],segmented_button_selected_color=settings["bg_color"],fg_color=settings["fg_color"],text_color=settings["text_color"])
 
 
 
@@ -207,6 +221,9 @@ def submit():
         label_result.configure(text="Please enter a valid number!", text_color="red")
     else:
         label_result.configure(text="", text_color=settings["text_color"])
+        event_instructions = ctk.CTkLabel(scrollable_frame, text="Add each event in the left hand column with the hours on the right.",font=("Helvetica", 14, "italic"),text_color=settings["label_text_color"])
+        event_instructions.pack()
+        label_list.append(event_instructions)
         create_event_fields(user_input)
         btn_submit.configure(command=eventUpdate)
         animate_progress(0.1)
@@ -277,6 +294,7 @@ def process_names():
     nsm_names_list = [name.strip() for name in raw_text.splitlines() if name.strip()]  # Clean up names
     master_names_list = pam_names_list + nsm_names_list
     label_names_status.configure(text=f"Processed {len(master_names_list)} names!\nGo to the 'Tasks' tab to continue", text_color="green")
+    # instruction_tab3.configure(text=f"Press the Process Tasks button to generate the task fields.")
     global namesconfirm 
     namesconfirm = True
     animate_progress(0.4)
@@ -312,7 +330,7 @@ def intialize_tasks():
         l.appended(task_textbox)
 
         # Add the button for removing tasks
-        task_button = ctk.CTkButton(task_frame, text="Delete a task",fg_color=settings["fg_color"])
+        task_button = ctk.CTkButton(task_frame, text="Delete a task",fg_color=settings["bg_color"])
         task_button.grid(row=row, column=3, padx=5, pady=5, sticky="s,w")
         button_list.append(task_button)
 
@@ -322,7 +340,7 @@ def intialize_tasks():
 
 
         # Add the button for adding tasks
-        task_button = ctk.CTkButton(task_frame, text="Add a task",fg_color=settings["fg_color"])
+        task_button = ctk.CTkButton(task_frame, text="Add a task",fg_color=settings["bg_color"])
         task_button.grid(row=row, column=3, padx=5, pady=5, sticky="n,w")
         button_list.append(task_button)
 
@@ -443,7 +461,7 @@ def populate_spreadsheet():
                     cell.insert(0.0,selection.raw)
                     selection.reqnum -= 1
             else: cell.insert(0.0,"No task found")
-    apply_colors()
+    # apply_colors()
 
 # Function to get the list of stuff.
 def obtaintasks():
@@ -541,6 +559,7 @@ def animate_progress(target_value, step=0.001):
         root.after(4, lambda: animate_progress(target_value))  # Recursively update
     else:
         progress_bar.set(target_value)  # Ensure it reaches exact target
+    # apply_colors()
 
 
 # Function to switch tabs automatically
@@ -662,7 +681,7 @@ names_title.pack(pady=10)
 label_list.append(names_title)
 
 # Instructions for Tab 2
-instruction = ctk.CTkLabel(names_tab, text="Enter each name on a new line", text_color=settings["text_color"], font=("Helvetica", 14, "italic"))
+instruction = ctk.CTkLabel(names_tab, text="Enter each name on a new line in its respective box, then click the Process Names button.", text_color=settings["text_color"], font=("Helvetica", 14, "italic"))
 instruction.pack()
 label_list.append(instruction)
 

@@ -33,5 +33,5 @@ def extended_euclidean(a, b):
 
 # print("\n\n\n")
 
-print((83)%13)
+print(123%64)
 
