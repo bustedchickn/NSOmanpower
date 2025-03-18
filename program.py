@@ -172,7 +172,7 @@ def apply_colors():
         frame.configure(fg_color=settings["fg_color"])
     for label in label_list:
         print(label)
-        label.configure(text_color=settings["text_color"])
+        label.configure(text_color=settings["label_text_color"])
     tabview.configure(segmented_button_selected_hover_color=settings["accent_color"],segmented_button_selected_color=settings["bg_color"],fg_color=settings["fg_color"],text_color=settings["text_color"])
 
 
@@ -294,7 +294,7 @@ def process_names():
     nsm_names_list = [name.strip() for name in raw_text.splitlines() if name.strip()]  # Clean up names
     master_names_list = pam_names_list + nsm_names_list
     label_names_status.configure(text=f"Processed {len(master_names_list)} names!\nGo to the 'Tasks' tab to continue", text_color="green")
-    # instruction_tab3.configure(text=f"Press the Process Tasks button to generate the task fields.")
+    instruction_tab3.configure(text=f"Press the Process Tasks button to generate the task fields.")
     global namesconfirm 
     namesconfirm = True
     animate_progress(0.4)
@@ -302,7 +302,7 @@ def process_names():
 
 # Function to create the tasks gui
 def intialize_tasks():
-    instruction_tab3.destroy()
+    # instruction_tab3.destroy()
 
     # Clear existing grid
     for widget in task_frame.winfo_children():
