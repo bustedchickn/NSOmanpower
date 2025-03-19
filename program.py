@@ -294,7 +294,7 @@ def process_names():
     nsm_names_list = [name.strip() for name in raw_text.splitlines() if name.strip()]  # Clean up names
     master_names_list = pam_names_list + nsm_names_list
     label_names_status.configure(text=f"Processed {len(master_names_list)} names!\nGo to the 'Tasks' tab to continue", text_color="green")
-    instruction_tab3.configure(text=f"Press the Process Tasks button to generate the task fields.")
+    instruction_tab3.configure(text=f"Add a description for each task in each event.\n\nAdding a number after the number required will restrict the number of people assigned to that task.\n\nBegin with 'PAM' or 'NSM' to make the task unique PAM or NSM respecively.\n\nPress the Process Tasks button to generate the task fields.")
     global namesconfirm 
     namesconfirm = True
     animate_progress(0.4)
@@ -360,6 +360,7 @@ def confirmtasks():
     obtaintasks()
     animate_progress(0.9)
     switch_tabs()
+    instruction_tab4.configure(text="Press view schedule to generate the schedule.")
 
 # Function to check everything is done do generate the spreadsheet
 def checkconfirm():
@@ -372,7 +373,7 @@ def checkconfirm():
 def populate_spreadsheet():
     if not can_be_generated:
         return
-    instruction_tab4.destroy()
+    instruction_tab4.configure(text="When you are done editing the schedule, export as a spreadsheet below.")
     gettasks()
     animate_progress(0.95)
     '''
@@ -573,9 +574,15 @@ def event_text_math():
     # 10% -> 20%
     animate_progress(progress_value)
 
+instructionn = None
 def on_focus_in(event, entry_id):
     active_entries.add(entry_id)
     modified_entries.append(event_entries[entry_id])
+    global instructionn
+    if instructionn == None:
+        instructionn = ctk.CTkLabel(scrollable_frame, text="Press the show entries button to continue.", text_color=settings["label_text_color"], font=("Helvetica", 14, "italic"))
+        instructionn.pack(side="bottom",pady=(20,0))
+        label_list.append(instructionn)
     # event_text_math()
 
 def on_focus_out(event, entry_id):
@@ -754,7 +761,7 @@ instruction_tab4 = ctk.CTkLabel(spreadsheet_tab, text="Please process events, na
 instruction_tab4.pack()
 label_list.append(instruction_tab4)
 
-btn_process_generate = ctk.CTkButton(spreadsheet_tab, text="Generate", command=checkconfirm, fg_color=settings["fg_color"])
+btn_process_generate = ctk.CTkButton(spreadsheet_tab, text="View schedules", command=checkconfirm, fg_color=settings["fg_color"])
 btn_process_generate.pack(pady=10)
 button_list.append(btn_process_generate)
 
