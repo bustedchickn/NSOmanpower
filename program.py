@@ -220,7 +220,7 @@ def submit():
         event_num_entry.delete(0, "end")
         label_result.configure(text="Please enter a valid number!", text_color="red")
     else:
-        label_result.configure(text="", text_color=settings["text_color"])
+        label_result.configure(text="", text_color=settings["label_text_color"])
         event_instructions = ctk.CTkLabel(scrollable_frame, text="Add each event in the left hand column with the hours on the right.",font=("Helvetica", 14, "italic"),text_color=settings["label_text_color"])
         event_instructions.pack()
         label_list.append(event_instructions)
@@ -294,7 +294,7 @@ def process_names():
     nsm_names_list = [name.strip() for name in raw_text.splitlines() if name.strip()]  # Clean up names
     master_names_list = pam_names_list + nsm_names_list
     label_names_status.configure(text=f"Processed {len(master_names_list)} names!\nGo to the 'Tasks' tab to continue", text_color="green")
-    instruction_tab3.configure(text=f"Add a description for each task in each event.\n\nAdding a number after the number required will restrict the number of people assigned to that task.\n\nBegin with 'PAM' or 'NSM' to make the task unique PAM or NSM respecively.\n\nPress the Process Tasks button to generate the task fields.")
+    instruction_tab3.configure(text=f"                                           Add a description for each task in each event.\n\n\u2022 Adding a number after the number required will restrict the number of people assigned to that task.\n\u2022 Begin with 'PAM' or 'NSM' to make the task unique PAM or NSM respecively.\n\u2022 Press the Process Tasks button to generate the task fields.")
     global namesconfirm 
     namesconfirm = True
     animate_progress(0.4)
@@ -640,12 +640,12 @@ frame_list.append(tabview)
 event_tab = tabview.add("Events")
 
 # Title for Tab 1
-title = ctk.CTkLabel(event_tab, text="Build a MANPOWER Sheet", text_color=settings["text_color"], font=("Helvetica", 18, "bold"))
+title = ctk.CTkLabel(event_tab, text="Build a MANPOWER Sheet", text_color=settings["label_text_color"], font=("Helvetica", 18, "bold"))
 title.pack(padx=50, pady=10)
 label_list.append(title)
 
 # Instructions for Tab 1
-instruction = ctk.CTkLabel(event_tab, text="Input the number of events.", text_color=settings["text_color"], font=("Helvetica", 14, "italic"))
+instruction = ctk.CTkLabel(event_tab, text="Input the number of events.", text_color=settings["label_text_color"], font=("Helvetica", 14, "italic"))
 instruction.pack()
 label_list.append(instruction)
 
@@ -683,12 +683,12 @@ button_list.append(btn_show)
 names_tab = tabview.add("Names")
 
 # Title for Tab 2
-names_title = ctk.CTkLabel(names_tab, text="Enter Names", text_color=settings["text_color"], font=("Helvetica", 18, "bold"))
+names_title = ctk.CTkLabel(names_tab, text="Enter Names", text_color=settings["label_text_color"], font=("Helvetica", 18, "bold"))
 names_title.pack(pady=10)
 label_list.append(names_title)
 
 # Instructions for Tab 2
-instruction = ctk.CTkLabel(names_tab, text="Enter each name on a new line in its respective box, then click the Process Names button.", text_color=settings["text_color"], font=("Helvetica", 14, "italic"))
+instruction = ctk.CTkLabel(names_tab, text="Enter each name on a new line in its respective box, then click the Process Names button.", text_color=settings["label_text_color"], font=("Helvetica", 14, "italic"))
 instruction.pack()
 label_list.append(instruction)
 
@@ -696,7 +696,7 @@ names_scrollable = ctk.CTkScrollableFrame(names_tab, width=850, height=400)
 names_scrollable.pack(pady=10, fill="both", expand=True)
 frame_list.append(names_scrollable)
 
-pamlbl = ctk.CTkLabel(names_scrollable, text="PAM", text_color=settings["text_color"], font=("Helvetica", 18, "bold"))
+pamlbl = ctk.CTkLabel(names_scrollable, text="PAM", text_color=settings["label_text_color"], font=("Helvetica", 18, "bold"))
 pamlbl.pack(pady=(10,0))
 label_list.append(pamlbl)
 
@@ -704,7 +704,7 @@ label_list.append(pamlbl)
 pam_names_textbox = ctk.CTkTextbox(names_scrollable, width=500, height=350)
 pam_names_textbox.pack(pady=(0,10))
 
-nsmlbl = ctk.CTkLabel(names_scrollable, text="NSM", text_color=settings["text_color"], font=("Helvetica", 18, "bold"))
+nsmlbl = ctk.CTkLabel(names_scrollable, text="NSM", text_color=settings["label_text_color"], font=("Helvetica", 18, "bold"))
 nsmlbl.pack(pady=(10,0))
 label_list.append(nsmlbl)
 
@@ -725,12 +725,12 @@ label_names_status.pack(pady=10)
 task_tab = tabview.add("Tasks")
 
 # Title for Tab 3
-task_title = ctk.CTkLabel(task_tab, text="Tasks", text_color=settings["text_color"], font=("Helvetica", 18, "bold"))
+task_title = ctk.CTkLabel(task_tab, text="Tasks", text_color=settings["label_text_color"], font=("Helvetica", 18, "bold"))
 task_title.pack(pady=10)
 label_list.append(task_title)
 
 # Instructions for tab 3
-instruction_tab3 = ctk.CTkLabel(task_tab, text="Please process events in the previous tab", text_color=settings["text_color"], font=("Helvetica", 14, "italic"))
+instruction_tab3 = ctk.CTkLabel(task_tab, text="Please process events in the previous tab", text_color=settings["label_text_color"], font=("Helvetica", 14, "italic"),justify="left")
 instruction_tab3.pack()
 label_list.append(instruction_tab3)
 
@@ -752,12 +752,12 @@ button_list.append(btn_process_tasks)
 spreadsheet_tab = tabview.add("Spreadsheet")
 
 # Title for Tab 4
-spreadsheet_title = ctk.CTkLabel(spreadsheet_tab, text="Spreadsheet View", text_color=settings["text_color"], font=("Helvetica", 18, "bold"))
+spreadsheet_title = ctk.CTkLabel(spreadsheet_tab, text="Spreadsheet View", text_color=settings["label_text_color"], font=("Helvetica", 18, "bold"))
 spreadsheet_title.pack(pady=10)
 label_list.append(spreadsheet_title)
 
 # Instructions for Tab 4
-instruction_tab4 = ctk.CTkLabel(spreadsheet_tab, text="Please process events, names, and tasks in the previous tabs", text_color=settings["text_color"], font=("Helvetica", 14, "italic"))
+instruction_tab4 = ctk.CTkLabel(spreadsheet_tab, text="Please process events, names, and tasks in the previous tabs", text_color=settings["label_text_color"], font=("Helvetica", 14, "italic"))
 instruction_tab4.pack()
 label_list.append(instruction_tab4)
 
@@ -780,23 +780,23 @@ button_list.append(create_sheet_btn)
 
 
 # Tab 5
-settings_tab = tabview.add("Settings")
+settings_tab = tabview.add("Themes")
 
 # Title for Tab 4
-settings_title = ctk.CTkLabel(settings_tab, text="Settings", text_color=settings["text_color"], font=("Helvetica", 18, "bold"))
+settings_title = ctk.CTkLabel(settings_tab, text="Themes", text_color=settings["label_text_color"], font=("Helvetica", 18, "bold"))
 settings_title.pack(pady=10)
 label_list.append(settings_title)
 
-# Instructions for Tab 4
-instruction_tab5 = ctk.CTkLabel(settings_tab, text="[instructions for how to help and also settings]", text_color=settings["text_color"], font=("Helvetica", 14, "italic"))
+# Instructions for Tab 5
+instruction_tab5 = ctk.CTkLabel(settings_tab, text="Select a theme with 'Change button color'.\nChange the background color with the other button.", text_color=settings["label_text_color"], font=("Helvetica", 14, "italic"))
 instruction_tab5.pack()
 label_list.append(instruction_tab5)
 
-btn_color_toggle = ctk.CTkButton(settings_tab, text="Switch themes", command=change_bg_color,fg_color=settings["fg_color"])
+btn_color_toggle = ctk.CTkButton(settings_tab, text="Change background color", command=change_bg_color,fg_color=settings["fg_color"])
 btn_color_toggle.pack(pady=10)
 button_list.append(btn_color_toggle)
 
-btn_fg_toggle = ctk.CTkButton(settings_tab, text="Change fg", fg_color=settings["fg_color"], command=change_fg_color)
+btn_fg_toggle = ctk.CTkButton(settings_tab, text="Change button color", fg_color=settings["fg_color"], command=change_fg_color)
 btn_fg_toggle.pack(pady=10)
 button_list.append(btn_fg_toggle)
 
