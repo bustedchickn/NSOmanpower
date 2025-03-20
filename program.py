@@ -167,7 +167,7 @@ def apply_colors():
     else:
         progress_bar.configure(progress_color=settings["accent_color"])
     for button in button_list:
-        button.configure(fg_color=settings["bg_color"], text_color=settings["text_color"])
+        button.configure(fg_color=settings["bg_color"], text_color=settings["text_color"],hover_color=settings["accent_color"])
     for frame in frame_list:
         frame.configure(fg_color=settings["fg_color"])
     for label in label_list:
