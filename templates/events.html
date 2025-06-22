@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Event Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Enter Event Names and Times</h1>
+        <form method="POST">
+            {% for i in range(num) %}
+                <div class="event-group">
+                    <input type="text" name="event_{{ i }}" placeholder="Event {{ i + 1 }} name" required>
+                    <input type="text" name="time_{{ i }}" placeholder="Time (ex: 10:00 AM - 11:00 AM)" required>
+                </div>
+            {% endfor %}
+            <button type="submit">Continue</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Enter Names</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Enter Names</h1>
+        <p class="instruction">Enter each name on a new line in its respective box, then click the Process Names button.</p>
+        <form method="POST">
+            <label for="pam_names"><strong>PAM Names</strong></label><br>
+            <textarea id="pam_names" name="pam_names" rows="10" cols="40" placeholder="One name per line" required></textarea><br><br>
+
+            <label for="nsm_names"><strong>NSM Names</strong></label><br>
+            <textarea id="nsm_names" name="nsm_names" rows="10" cols="40" placeholder="One name per line" required></textarea><br><br>
+
+            <button type="submit">Process Names</button>
+        </form>
+
+        {% if status %}
+            <p class="status">{{ status }}</p>
+        {% endif %}
+    </div>
+</body>
+</html>

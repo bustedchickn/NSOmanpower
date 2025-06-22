@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NSO MANPOWER SHEET</title>
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Build a MANPOWER Sheet</h1>
+        <p class="instruction">Input the number of events.</p>
+
+        <form method="POST">
+            <input type="number" name="num_events" placeholder="Enter a number (ex: 1)" required>
+            <button type="submit">Generate Events</button>
+        </form>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+    </div>
+</body>
+</html>
